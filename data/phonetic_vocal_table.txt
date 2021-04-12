@@ -1,0 +1,89 @@
+8 11
+VOCAL
+Front
+Front rounded
+
+(rounded)
+Central
+Central rounded
+
+(rounded)
+Back
+Back rounded
+Close
+i ii
+y ü
+
+
+ɨ üh
+ʉ üöh
+
+
+ɯ ögh
+u uu
+
+
+
+ɪ ee
+ʏ ö
+
+
+
+ʊ ogh
+
+
+Close-mid
+e eh
+ø öö
+
+
+ɘ ööh
+ɵ ooh
+
+
+ɤ öh
+o oo
+
+
+
+
+
+ə ergh
+
+
+
+
+
+Open-mid
+ɛ äh
+œ öögh
+
+
+ɜ äeh
+ɞ öeh
+
+
+ʌ ärgh
+ɔ oogh
+
+æ ääh
+
+
+
+ɐ aah
+
+
+
+
+
+Open
+a aa
+ɶ öe
+
+
+
+
+
+
+ɑ ar
+ɒ oa

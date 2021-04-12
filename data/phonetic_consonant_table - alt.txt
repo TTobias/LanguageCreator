@@ -1,0 +1,208 @@
+9 23
+-
+Bilabial voiceless
+Bilabial voiced
+Labiodental voiceless
+Labiodental voiced
+Dental voiceless
+Dental voiced
+Alveolar voiceless
+Alveolar voiced
+Postalveolar voiceless
+Postalveolar voiced
+Retroflex voiceless
+Retroflex voiced
+Palatal voiceless
+Palatal voiced
+Velar voiceless
+Velar voiced
+Uvular voiceless
+Uvular voiced
+Pharyngeal voiceless
+Pharyngeal voiced
+Glottal voiceless
+Glottal voiced
+Plosive
+/p/ p
+/b/ b
+
+
+
+
+/t/ t
+/d/ d
+
+
+/tt/ tt
+/dd/ dd
+/kj/ kj
+/gj/ gj
+/k/ k
+/g/ g
+/q/ q
+/gg/ gg
+
+
+/'/ '
+
+Nasal
+
+/m/ m
+
+/mm/ mm
+
+
+
+/n/ n
+
+
+
+/nn/ nn
+
+/nj/ nj
+
+/gn/ gn
+
+/ggn/ ggn
+
+
+
+
+Trill
+
+/br/ br
+
+
+
+
+
+/rr/ rr
+
+
+
+
+
+
+
+
+
+/rrh/ rrh
+
+
+
+
+Tap or Flap
+
+
+
+/wr/ wr
+
+
+
+/rh/ rh
+
+
+
+/r/ r
+
+
+
+
+
+
+
+
+
+
+Fricative
+/ff/ ff
+/wf/ wf
+/f/ f
+/v/ v
+/fv/ fv
+/vw/ vw
+/s/ s
+/z/ z
+/ssh/ ssh
+/jy/ jy
+/sh/ sh
+/jsh/ jsh
+/shj/ shj
+/jj/ jj
+/chr/ chr
+/hr/ hr
+/chrr/ chrr
+/hrr/ hrr
+/hhh/ hhh
+/rng/ rng
+/h/ h
+/hh/ hh
+Lateral fricative
+
+
+
+
+
+
+/shl/ shl
+/sshl/ sshl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Approximant
+
+
+
+/wu/ wu
+
+
+
+/ru/ ru
+
+
+
+/ruu/ ruu
+
+/j/ j
+
+/hrh/ hrh
+
+
+
+
+
+
+Lateral approximant
+
+
+
+
+
+
+
+/l/ l
+
+
+
+/ll/ ll
+
+/jh/ jh
+
+/hlh/ hlh
+
+
+
+
+
+
