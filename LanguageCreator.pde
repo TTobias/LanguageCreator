@@ -1,13 +1,13 @@
 
 
-
+//For Settings
+public SceneManager sceneManager;
 public void settings(){
   size(1400,900);
   sceneManager = new SceneManager();
 }
 
 //Called once at the beginning
-public SceneManager sceneManager;
 public void start(){
 }
 
@@ -60,4 +60,48 @@ public void mouseInput(){
   }
   
   pmouse = mousePressed;
+}
+
+
+
+
+
+
+//Scene that will be loaded on starting
+public class StartupScene extends Scene{
+  public StartupScene(){ super("Startup"); 
+    constructGui();
+    onInstanciate();
+  }
+  
+  public UI_Button creationModulButton;
+  public UI_Button translationModulButton;
+  public UI_Button analyseModulButton;
+  
+  public void constructGui(){
+    creationModulButton = new UI_Button( new Vector2(300,300),new Vector2(300,60),"Create Language",true );
+    translationModulButton = new UI_Button( new Vector2(300,400),new Vector2(300,60),"Translate Abstraction",true );
+    analyseModulButton = new UI_Button( new Vector2(300,500),new Vector2(300,60),"Analyse Language",true );
+    
+    addUiElement(creationModulButton);
+    addUiElement(translationModulButton);
+    addUiElement(analyseModulButton);
+  }
+  
+  public void onInstanciate(){ }
+  
+  public void btnFunctions(){
+    if(creationModulButton.getTrigger()){
+      println("Debug: Scene switched from Startup to Creation");
+      sceneManager.switchSceneByName("Creation");
+    }
+    if(translationModulButton.getTrigger()){
+      println("Debug: Scene switched from Startup to Translation");
+      sceneManager.switchSceneByName("Translation");
+    }
+    if(analyseModulButton.getTrigger()){
+      println("Debug: Scene switched from Startup to Analysis");
+      sceneManager.switchSceneByName("Analysis");
+    }
+  }
 }

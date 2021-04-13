@@ -7,6 +7,11 @@ public class Vector2{
     this.y = y;
   }
   
+  public void set(float x, float y){
+    this.x = x;
+    this.y = y;
+  }
+  
   public void Add(Vector2 a){
     x += a.x;
     y += a.y;
@@ -192,46 +197,4 @@ public <T> ArrayList<T> copyAndExtend(ArrayList<T> ls, T t){
   for(int i = 0; i<ls.size(); i++){ tmp.add(ls.get(i)); }
   tmp.add(t);
   return tmp;
-}
-
-
-
-
-//Scene that will be loaded on starting
-public class StartupScene extends Scene{
-  public StartupScene(){ super("Startup"); 
-    constructGui();
-    onInstanciate();
-  }
-  
-  public UI_Button creationModulButton;
-  public UI_Button translationModulButton;
-  public UI_Button analyseModulButton;
-  
-  public void constructGui(){
-    creationModulButton = new UI_Button( new Vector2(300,300),new Vector2(300,60),"Create Language",true );
-    translationModulButton = new UI_Button( new Vector2(300,400),new Vector2(300,60),"Translate Abstraction",true );
-    analyseModulButton = new UI_Button( new Vector2(300,500),new Vector2(300,60),"Analyse Language",true );
-    
-    addUiElement(creationModulButton);
-    addUiElement(translationModulButton);
-    addUiElement(analyseModulButton);
-  }
-  
-  public void onInstanciate(){ }
-  
-  public void btnFunctions(){
-    if(creationModulButton.getTrigger()){
-      println("Debug: Scene switched from Startup to Creation");
-      sceneManager.switchSceneByName("Creation");
-    }
-    if(translationModulButton.getTrigger()){
-      println("Debug: Scene switched from Startup to Translation");
-      sceneManager.switchSceneByName("Translation");
-    }
-    if(analyseModulButton.getTrigger()){
-      println("Debug: Scene switched from Startup to Analysis");
-      sceneManager.switchSceneByName("Analysis");
-    }
-  }
 }

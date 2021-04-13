@@ -7,6 +7,8 @@ public class SceneManager{
   public int activeSceneIndex = -1; //don't modify this number directly!
   
   public SceneManager(){
+    sceneManager = this;
+    
     //Add all the scenes
     scenes.add(new StartupScene());
     scenes.add(new AnalysisScene());
@@ -57,6 +59,15 @@ public class SceneManager{
   }
   public void switchByIndex(int i){
     if(i >= 0 && i < scenes.size()){ activeSceneIndex = i; }
+  }
+  
+  public Scene getByName(String n){
+    for(int i = 0; i < scenes.size() ; i++){
+      if(scenes.get(i).name.equals(n)){
+        return scenes.get(i);
+      }
+    }
+    return null;
   }
 }
 
