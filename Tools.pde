@@ -198,3 +198,54 @@ public <T> ArrayList<T> copyAndExtend(ArrayList<T> ls, T t){
   tmp.add(t);
   return tmp;
 }
+
+
+//Removes all lines and rows without any selection
+public UI_SelectionTable filterConsonantTable (Vector2 pos, Vector2 exp, UI_SelectionTable table){
+  UI_SelectionTable tmp = new UI_SelectionTable(pos,exp,"");
+  
+  IntList rowlist = new IntList();
+  IntList columnlist = new IntList();
+  
+  for(int r = 1; r < table.rows; r++){
+    boolean test = false; //checks if anything in the row is selected
+    for(int c = 1; c < table.columns; c++){
+      if(table.active[r][c]){
+        test = true;
+      }
+    }
+    if(test){
+      rowlist.append(r);
+    }
+  }
+  tmp.rows = rowlist.size()+1;
+  
+  for(int c = 1; c < table.columns; c++){
+    boolean test = false; //checks if anything in the row is selected
+    for(int r = 1; r < table.rows; r++){
+      if(table.active[r][c]){
+        test = true;
+      }
+    }
+    if(test){
+      columnlist.append(c);
+    }
+  }
+  tmp.columns = columnlist.size()+1;
+  
+  tmp.text = new String[tmp.rows][tmp.columns];
+  tmp.active = new boolean[tmp.rows][tmp.columns];
+  tmp.selectable = new boolean[tmp.rows][tmp.columns];
+      /*
+  for(int r = 0; r < tmp.rows; r++){
+    for(int c = 0; c < tmp.columns; c++){
+      tmp.text[r][c] = table.text[rowlist.get(r)(
+      tmp.active[r][c] = false;
+      tmp.selectable[r][c] = !text[r][c].equals("");
+    }
+  }*/
+    
+  tmp.boxExpanse = new Vector2(tmp.expanse.x / float(tmp.columns), tmp.expanse.y / float(tmp.rows));
+  
+  return tmp;
+}

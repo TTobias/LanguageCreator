@@ -278,13 +278,22 @@ public class UI_SelectionTable extends UIObject{
   
   public Vector2 boxExpanse;
   
-  public UI_SelectionTable(Vector2 pos, Vector2 exp, String file){ 
+  public UI_SelectionTable(Vector2 pos, Vector2 exp, String file){ //file = "" makes it skip the import
     //The table is saved in a textfile: 1st line: row and column count, each following line one object. Default: none selected
     //The first row and line are not selectable. Empty fields can not be selected
     position = pos;
     expanse = exp;
     
-    importFile(file);
+    if(file != ""){
+      importFile(file);
+    }else{
+      rows = 0;
+      columns = 0;
+      text = new String[rows][columns];
+      active = new boolean[rows][columns];
+      selectable = new boolean[rows][columns];
+      boxExpanse = expanse;
+    }
   }
   
   public void importFile(String f){
@@ -398,8 +407,8 @@ public class UI_Text extends UIObject{
       if(tmp[i] == '\n') { lines++; }
     }
     
-    textSize = (expanse.y-2.0) / (1.5f * lines) *0.7f;
     textColor = ColorCode.guiText;
+    recalculateTextSize();
   }
   
   public UI_Text(Vector2 pos, Vector2 exp, String txt, color c){
@@ -412,8 +421,12 @@ public class UI_Text extends UIObject{
       if(tmp[i] == '\n') { lines++; }
     }
     
-    textSize = (expanse.y-2.0) / (1.5f * lines) *0.7f;
     textColor = c;
+    recalculateTextSize();
+  }
+  
+  public void recalculateTextSize(){
+    textSize = (expanse.y-2.0) / (1.5f * lines) *0.85f;
   }
   
   public void show(){
@@ -449,8 +462,11 @@ public class UI_SyllableShapeEditor extends UIObject{
   
   public ArrayList<UI_SyllablePartEditor> onsetDetails;
   public ArrayList<UI_SyllablePartEditor> nucleusDetails;
-  //public UI_SyllablePartEditor nucleusDetails;
   public ArrayList<UI_SyllablePartEditor> codaDetails;
+  
+  //public ArrayList<boolean> onsetOption;
+  //public boolean nucleusOption;
+  //public ArrayList<boolean> codaOption;
   
   public UI_SyllableShapeEditor(Vector2 pos, Vector2 exp, float space, UI_SelectionTable ct, UI_SelectionTable vt){
     position = pos;
@@ -470,23 +486,19 @@ public class UI_SyllableShapeEditor extends UIObject{
     removeCoda =    new UI_Button(new Vector2(pos.x+exp.x-exp.y*0.45f,pos.y + exp.y*0.55f),new Vector2(exp.y*0.4f,exp.y*0.4f),"-",true);
     toggleNucleus = new UI_Button(new Vector2(pos.x+exp.y*0.5f,pos.y+exp.y*0.05f),new Vector2(exp.y*0.4f,exp.y*0.4f),"V",true);
     
-    //nucleusDetails = new UI_SyllablePartEditor(new Vector2(position.x+expanse.x*0.5-expanse.y*0.45,position.y+expanse.y), new Vector2(expanse.y*0.9,downSpace), true, vt);
     onsetDetails = new ArrayList<UI_SyllablePartEditor>();
     nucleusDetails = new ArrayList<UI_SyllablePartEditor>();
     codaDetails = new ArrayList<UI_SyllablePartEditor>();
     for(int i = 0; i<onsetAmount; i++){ 
-      //onsetDetails.add( new UI_SyllablePartEditor(new Vector2(position.x+expanse.x*0.5-expanse.y*0.45 -(1+i)*expanse.y,position.y+expanse.y), new Vector2(expanse.y*0.9,downSpace), false, ct) ); }
       onsetDetails.add( new UI_SyllablePartEditor(new Vector2(position.x+expanse.x*0.5-expanse.y*0.9 -(1+i)*expanse.y,position.y+expanse.y), new Vector2(expanse.y*0.9,downSpace), false, ct) ); }
     nucleusDetails.add( new UI_SyllablePartEditor(new Vector2(position.x+expanse.x*0.5-expanse.y*0.45,position.y+expanse.y), new Vector2(expanse.y*0.9,downSpace), true, vt) );
     for(int i = 0; i<codaAmount; i++){
-      //codaDetails.add( new UI_SyllablePartEditor(new Vector2(position.x+expanse.x*0.5-expanse.y*0.45 +(1+i)*expanse.y,position.y+expanse.y), new Vector2(expanse.y*0.9,downSpace), false, ct) ); }
       codaDetails.add( new UI_SyllablePartEditor(new Vector2(position.x+expanse.x*0.5 +(1+i)*expanse.y,position.y+expanse.y), new Vector2(expanse.y*0.9,downSpace), false, ct) ); }
   }
   
   public void reimport(){
     for(int i = 0; i<onsetDetails.size(); i++){ onsetDetails.get(i).importSounds(); }
     for(int i = 0; i<nucleusDetails.size(); i++){ nucleusDetails.get(i).importSounds(); }
-    //nucleusDetails.importSounds();
     for(int i = 0; i<codaDetails.size(); i++){ codaDetails.get(i).importSounds(); }
   }
   
@@ -500,7 +512,6 @@ public class UI_SyllableShapeEditor extends UIObject{
     //Part-Editors
     for(int i = 0; i<onsetDetails.size(); i++){ onsetDetails.get(i).draw(); }
     for(int i = 0; i<nucleusDetails.size(); i++){ nucleusDetails.get(i).draw(); }
-    //nucleusDetails.draw();
     for(int i = 0; i<codaDetails.size(); i++){ codaDetails.get(i).draw(); }
   }
   
@@ -553,11 +564,11 @@ public class UI_SyllableShapeEditor extends UIObject{
     //Part-Editors
     for(int i = 0; i<onsetDetails.size(); i++){ onsetDetails.get(i).show(); }
     for(int i = 0; i<nucleusDetails.size(); i++){ nucleusDetails.get(i).show(); }
-    //nucleusDetails.show();
     for(int i = 0; i<codaDetails.size(); i++){ codaDetails.get(i).show(); }
   }
   
   public void onMouseDown(){
+    //Redirection to the buttons and other child-UI
     if(mouseX > position.x && mouseX < position.x+expanse.x && mouseY > position.y && mouseY < position.y+expanse.y){
       addOnset.onMouseDown();
       removeOnset.onMouseDown();
@@ -568,9 +579,11 @@ public class UI_SyllableShapeEditor extends UIObject{
       //Part-Editors
       for(int i = 0; i<onsetDetails.size(); i++){ onsetDetails.get(i).onMouseDown(); }
       for(int i = 0; i<nucleusDetails.size(); i++){ nucleusDetails.get(i).onMouseDown(); }
-      //nucleusDetails.onMouseDown();
       for(int i = 0; i<codaDetails.size(); i++){ codaDetails.get(i).onMouseDown(); }
     }
+    
+    //Toggle optionality
+    
     
     //Button Functions
     if(addOnset.getTrigger()){
@@ -760,6 +773,203 @@ public class UI_SyllablePartEditor extends UIObject{
             }
           }
         }
+      }
+    }
+  }
+  
+  public String toText(){
+    boolean all = true;
+    String minus = "";
+    String only = "";
+    for(int i = 0; i < soundtypes.size() ; i++){
+      if(soundtypes.get(i).state){
+        for(int s = 0; s < sounds.get(i).size() ; s++){
+          if(sounds.get(i).get(s).state){
+            only += sounds.get(i).get(s).text +", ";
+          }else{
+            all = false;
+          }
+        }
+      }else{
+        minus += soundtypes.get(i).text+", ";
+        all = false;
+      }
+    }
+    
+    if(all){
+      return "All valid sounds";
+    }else{
+      return (minus == ""? "" : "No "+trim(minus)+" Sounds " )+(only==""?"" : "only "+only);
+    }
+  }
+}
+
+
+
+
+//Integer Field
+public class UI_IntegerField extends UIObject{
+  public Vector2 position;
+  public Vector2 expanse;
+  
+  public UI_Text text;
+  public UI_Text number;
+  public UI_Button add;
+  public UI_Button subtract;
+  
+  public int value, min, max;
+  public boolean changed = false;
+  
+  public UI_IntegerField(Vector2 pos, Vector2 exp, String txt, int v, int mi, int ma){
+    position = pos;
+    expanse = exp;
+    
+    text = new UI_Text(new Vector2(position.x,position.y), new Vector2(expanse.x *0.65,expanse.y),txt);
+    number = new UI_Text(new Vector2(position.x+expanse.x*0.75,position.y+expanse.y*0.08), new Vector2(expanse.x *0.15,expanse.y*0.86),v+"");
+    subtract = new UI_Button(new Vector2(position.x+expanse.x*0.69,position.y+expanse.y*0.05), new Vector2(expanse.x *0.06,expanse.y*0.9),"-",true);
+    add = new UI_Button(new Vector2(position.x+expanse.x*0.9,position.y+expanse.y*0.05), new Vector2(expanse.x *0.06,expanse.y*0.9),"+",true);
+    
+    value = v;
+    max = ma;
+    min = mi;
+  }
+  
+  public void draw(){
+    text.draw();
+    number.draw();
+    add.draw();
+    subtract.draw();
+  }
+  
+  public void show(){
+    text.show();
+    number.show();
+    add.show();
+    subtract.show();
+  }
+  
+  public void onMouseDown(){
+    text.onMouseDown();
+    number.onMouseDown();
+    add.onMouseDown();
+    subtract.onMouseDown();
+    
+    //Button Function
+    if(add.getTrigger()){
+      changed = true;
+      value++;
+      if(value >= max){ add.active = false; }
+      subtract.active = true;
+      number.text = value+"";
+    }
+    if(subtract.getTrigger()){
+      changed = true;
+      value--;
+      if(value <= min){ subtract.active = false; }
+      add.active = true;
+      number.text = value+"";
+    }
+  }
+  
+  public boolean getTrigger(){
+    if(changed){
+      changed = false;
+      return true;
+    }
+    return false;
+  }
+}
+
+
+//Table
+public class UI_Table extends UIObject{
+  public Vector2 position;
+  public Vector2 expanse;
+  
+  public int rows, columns;
+  
+  public String[][] text = new String[0][0];
+  public boolean[][] selectable = new boolean[0][0];
+  
+  public Vector2 boxExpanse;
+  
+  //public UI_Table(Vector2 pos, Vector2 exp, String file){ }//unused atm
+  
+  public UI_Table(Vector2 pos, Vector2 exp, UI_SelectionTable table){ //filters a selectiontable
+    position = pos;
+    expanse = exp;
+    
+    applyTable(table);
+  }
+  
+  public void applyTable(UI_SelectionTable table){
+      
+    IntList rowlist = new IntList();
+    IntList columnlist = new IntList();
+    
+    for(int r = 1; r < table.rows; r++){
+      boolean test = false; //checks if anything in the row is selected
+      for(int c = 1; c < table.columns; c++){
+        if(table.active[r][c]){
+          test = true;
+        }
+      }
+      if(test){
+        rowlist.append(r);
+      }
+    }
+    rows = rowlist.size()+1;
+    
+    for(int c = 1; c < table.columns; c++){
+      boolean test = false; //checks if anything in the row is selected
+      for(int r = 1; r < table.rows; r++){
+        if(table.active[r][c]){
+          test = true;
+        }
+      }
+      if(test){
+        columnlist.append(c);
+      }
+    }
+    columns = columnlist.size()+1;
+    
+    text = new String[rows][columns];
+    selectable = new boolean[rows][columns];
+    
+    for(int r = 0; r < rows-1; r++){
+      for(int c = 0; c < columns-1; c++){
+        text[r+1][c+1] = table.text[rowlist.get(r)][columnlist.get(c)];
+        selectable[r+1][c+1] = table.selectable[rowlist.get(r)][columnlist.get(c)];
+      }
+    }
+    
+    text[0][0] = table.text[0][0];
+    for(int i = 0; i < columns-1; i++){
+      text[0][i+1] = table.text[0][columnlist.get(i)];
+    }
+    for(int i = 0; i < rows-1; i++){
+      text[i+1][0] = table.text[rowlist.get(i)][0];
+    }
+      
+    boxExpanse = new Vector2(expanse.x / float(columns), expanse.y / float(rows));
+  }
+  
+  public void show(){
+    stroke(0);
+    for(int r = 0 ; r<rows ; r++){
+      for(int c = 0 ; c<columns ; c++){
+        textSize(18);
+        if(r == 0 || c == 0){
+          textSize(10);
+          fill(ColorCode.guiBackground);
+        }else if(selectable[r][c]){
+          fill(ColorCode.guiHighlight);
+        }else{
+          fill(ColorCode.guiInactive);
+        }
+        rect(position.x + c*boxExpanse.x, position.y + r*boxExpanse.y, boxExpanse.x, boxExpanse.y);
+        fill(ColorCode.black);
+        text(text[r][c], position.x + c*boxExpanse.x + boxExpanse.x*0.1, position.y + r*boxExpanse.y + 16);
       }
     }
   }
