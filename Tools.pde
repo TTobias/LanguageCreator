@@ -36,6 +36,8 @@ public static class ColorCode{
   public static color guiTextBackground = #afafaf;
   public static color guiBorder = #161616;
   public static color guiText = #323232;
+  public static color guiTextBox = #7a777d;
+  public static color guiInactiveTextBox = #6a676d;
   public static color guiHighlight = #eeff53;
   public static color guiTriggered = #d67c2e;
   public static color guiInactive = #4b4b4b;
@@ -127,67 +129,6 @@ public boolean isNumerical(String s){
   return true;
 }
 
-public String[] gerArticleList = { "der", "die", "das" };
-public boolean isArticle(String s){
-  String tmp = uncapitalize(s);
-  for(int i = 0; i<gerArticleList.length; i++) {if ( tmp.equals(gerArticleList[i]) ){ return true; }}
-  return false;
-}
-
-public String[] gerPronounList = { 
-"ich", "du", "er", "sie", "es", "wir", "ihr", //Personal
-"mein", "meine", "meiner", "meins", "dein", "deine", "deiner", "deins", "sein", "seine", "seiner", "seins", "ihr", "ihre", "ihrer", "ihres", "ihrs", //Possessiv
-"unser", "unsere", "unserer", "unsers", "unseres", "euer", "eure", "eurer", "eures", //Possessiv
-"mich", "dich", "sich", "uns", "euch", //Reflexiv
-//"der", "die", "das", "welche", "welcher", "welches", //Relativ
-//"wer, "was", "wem", "wen", "wessen", //Interrogativ (replaces noun in questions)
-//"dieser", "diese", "dieses", "jener", "derjenige", "diejenige", //Demonstrativ
-"etwas", "nichts", "man", "jemand", "jeder" //Indefinit
-//Deklination
-}; 
-public boolean isPronoun(String s){
-  String tmp = uncapitalize(s);
-  for(int i = 0; i<gerPronounList.length; i++) {if ( tmp.equals(gerPronounList[i]) ){ return true; }}
-  return false;
-}
-
-public String[] gerPreposList = { "ich", "du", "er", "sie", "es", "wir", "ihr" }; 
-public boolean isPreposition(String s){
-  String tmp = uncapitalize(s);
-  for(int i = 0; i<gerPreposList.length; i++) {if ( tmp.equals(gerPreposList[i]) ){ return true; }}
-  return false;
-}
-
-public String[] gerConnectorList = { "und", "oder", "weil", "denn", "obwohl", "wenn", "seit", "nachdem", "während", "aber" }; 
-public boolean isConnector(String s){
-  String tmp = uncapitalize(s);
-  for(int i = 0; i<gerConnectorList.length; i++) {if ( tmp.equals(gerConnectorList[i]) ){ return true; }}
-  return false;
-}
-
-public String[] gerParticleList = { "sogar", "eben", "gerade", "ziemlich", "sehr", "auch" }; 
-public boolean isParticle(String s){
-  String tmp = uncapitalize(s);
-  for(int i = 0; i<gerParticleList.length; i++) {if ( tmp.equals(gerParticleList[i]) ){ return true; }}
-  return false;
-}
-
-public String[] gerNumericalList = { "ein", "eins", "eines", "einen", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf", "zwölf", "zwanzig", "fünfzig", "hundert" }; 
-public String[] gerQuantifierList = { "paar", "einige", "viele" }; 
-public boolean isQuantifier(String s){
-  String tmp = uncapitalize(s);
-  for(int i = 0; i<gerNumericalList.length; i++) {if ( tmp.equals(gerNumericalList[i]) ){ return true; }}
-  for(int i = 0; i<gerQuantifierList.length; i++) {if ( tmp.equals(gerQuantifierList[i]) ){ return true; }}
-  if( isNumerical( s ) ){ return true; }
-  return false;
-}
-
-public String[] gerAdverbList = { "schon", "noch", "meistens", "genug", "jetzt", "innen", "hier", "dort", "damals", "halbwegs" };
-public boolean isAdverb(String s){
-  String tmp = uncapitalize(s);
-  for(int i = 0; i<gerAdverbList.length; i++) {if ( tmp.equals(gerAdverbList[i]) ){ return true; }}
-  return false;
-}
 
 
 
@@ -200,52 +141,15 @@ public <T> ArrayList<T> copyAndExtend(ArrayList<T> ls, T t){
 }
 
 
-//Removes all lines and rows without any selection
-public UI_SelectionTable filterConsonantTable (Vector2 pos, Vector2 exp, UI_SelectionTable table){
-  UI_SelectionTable tmp = new UI_SelectionTable(pos,exp,"");
-  
-  IntList rowlist = new IntList();
-  IntList columnlist = new IntList();
-  
-  for(int r = 1; r < table.rows; r++){
-    boolean test = false; //checks if anything in the row is selected
-    for(int c = 1; c < table.columns; c++){
-      if(table.active[r][c]){
-        test = true;
-      }
-    }
-    if(test){
-      rowlist.append(r);
-    }
-  }
-  tmp.rows = rowlist.size()+1;
-  
-  for(int c = 1; c < table.columns; c++){
-    boolean test = false; //checks if anything in the row is selected
-    for(int r = 1; r < table.rows; r++){
-      if(table.active[r][c]){
-        test = true;
-      }
-    }
-    if(test){
-      columnlist.append(c);
-    }
-  }
-  tmp.columns = columnlist.size()+1;
-  
-  tmp.text = new String[tmp.rows][tmp.columns];
-  tmp.active = new boolean[tmp.rows][tmp.columns];
-  tmp.selectable = new boolean[tmp.rows][tmp.columns];
-      /*
-  for(int r = 0; r < tmp.rows; r++){
-    for(int c = 0; c < tmp.columns; c++){
-      tmp.text[r][c] = table.text[rowlist.get(r)(
-      tmp.active[r][c] = false;
-      tmp.selectable[r][c] = !text[r][c].equals("");
-    }
-  }*/
-    
-  tmp.boxExpanse = new Vector2(tmp.expanse.x / float(tmp.columns), tmp.expanse.y / float(tmp.rows));
-  
-  return tmp;
+
+public void 
+
+
+
+
+
+//Used for storing the words in a dictionary
+public class WordTranslation{
+  public String word;
+  public String translation;
 }

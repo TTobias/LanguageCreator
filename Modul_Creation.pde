@@ -8,6 +8,9 @@ public class CreationScene extends Scene{
   
   public UI_Button backButton;
   public UI_LayerSwitch mainLayerSwitch;
+  public UI_Text missingLowPriority;
+  public UI_Text missingMediumPriority;
+  public UI_Text missingHighPriority;
   
   //Layer0 - DATA
   public UI_Layer layer0_data;
@@ -29,7 +32,7 @@ public class CreationScene extends Scene{
     public UI_Button bakeSyllableShapeButton;
     public UI_Text syllableShapeInstructionText;
   public UI_Layer layer1c_exceptions;
-    public UI_Text phoneticExceptionText;
+    ///////////////////////////
   public UI_Layer layer1d_stressing;
     public UI_IntegerField primaryStressingPositionField;
     public UI_Text syllableStressingInstructionText;
@@ -42,14 +45,35 @@ public class CreationScene extends Scene{
     public UI_Text resultPhonotacticalStressingText;
     public UI_Button confirmPhoneticResultsButton;
   
-  //Layer2 - DUMMY
-  public UI_Layer layer2_dummy;
+  //Layer2 - PROTOLANGUAGE
+  public UI_Layer layer2_protolanguage;
+  public UI_LayerSwitch layer2Switch;
+  
+  public UI_Layer layer2a_rootWords;
+    public UI_Button addNewRootWordButton;
+    public UI_Button appendRootWordButton;
+    public UI_MultiText rootWordMultiText;
+    public UI_VocabularyList rootWordVocabularyList;
+    public UI_WordEditor rootWordEditor;
+  public UI_Layer layer2b_wordOrder;
+  public UI_Layer layer2c_quantifiers;
+  public UI_Layer layer2d_tenses;
+  public UI_Layer layer2e_valency;
+  public UI_Layer layer2f_testing;
   
   //Layer3 - DUMMY
-  public UI_Layer layer3_dummy;
+  public UI_Layer layer3_;
   
   public void constructGui(){
+    
+        missingLowPriority = new UI_Text(new Vector2(width*0.5-260,height*0.5-100),new Vector2(500,100), "Not implemented yet\nlow priority");
+        missingMediumPriority = new UI_Text(new Vector2(width*0.5-260,height*0.5-100),new Vector2(500,100), "Not implemented yet\nmedium priority");
+        missingHighPriority = new UI_Text(new Vector2(width*0.5-260,height*0.5-100),new Vector2(500,100), "Not implemented yet\nhigh priority");
+    
+    
     layer0_data = new UI_Layer( "0: Data" );
+        
+        layer0_data.addObject(missingMediumPriority);
     
     layer1_phonology = new UI_Layer( "1: Phonology" );
     
@@ -78,9 +102,8 @@ public class CreationScene extends Scene{
         layer1b_phonotactics.addObject(syllableShapeInstructionText);
       
       layer1c_exceptions = new UI_Layer( "1c: Exceptions" );
-        phoneticExceptionText = new UI_Text(new Vector2(width*0.5-260,height*0.5-100),new Vector2(500,100), "Placeholder Text.");
         
-        layer1c_exceptions.addObject(phoneticExceptionText);
+        layer1c_exceptions.addObject(missingLowPriority);
       
       layer1d_stressing = new UI_Layer( "1d: Stressing" );
         primaryStressingPositionField = new UI_IntegerField(new Vector2(15,75), new Vector2(500,40),"Default Stress Position:",1,-5,8);
@@ -115,17 +138,64 @@ public class CreationScene extends Scene{
       layer1Switch.addLayer(layer1e_result);
       layer1_phonology.addObject(layer1Switch);
     
-    layer2_dummy = new UI_Layer( "2: Dummy" );
+    
+    layer2_protolanguage = new UI_Layer( "2: Protolanguage" );
+    
+      layer2a_rootWords = new UI_Layer( "2a: Root Words" );
+        rootWordMultiText = new UI_MultiText(new Vector2(15,75),new Vector2(700,210));
+        rootWordMultiText.addPage( " Instruction", "Instructions not added yet" );
+        rootWordMultiText.addPage( " Sound-List", "Sounds not added yet" );
+        rootWordMultiText.addPage( " Syllable Data", "Syllable Data not added yet" );
+        rootWordMultiText.addPage( " Main Roots", "Important root words not added yet" );
+        addNewRootWordButton = new UI_Button(new Vector2(15,305),new Vector2(300,40), "new Word",true);
+        appendRootWordButton = new UI_Button(new Vector2(415,305),new Vector2(300,40), "append Word",true);
+        rootWordVocabularyList = new  UI_VocabularyList(new Vector2(725,75),new Vector2(650,750));
+        rootWordEditor = new UI_WordEditor(new Vector2(15,350),new Vector2(700,380), new UI_InputKeyboard(new Vector2(15,740),new Vector2(700,130),resultPhonologyConsonantTable,resultPhonologyVowelTable));
+        
+        layer2a_rootWords.addObject(addNewRootWordButton);
+        layer2a_rootWords.addObject(appendRootWordButton);
+        layer2a_rootWords.addObject(rootWordMultiText);
+        layer2a_rootWords.addObject(rootWordVocabularyList);
+        layer2a_rootWords.addObject(rootWordEditor);
+    
+      layer2b_wordOrder = new UI_Layer( "2b: Word Order" );
+        
+        layer2b_wordOrder.addObject(missingHighPriority);
+      
+      layer2c_quantifiers = new UI_Layer( "2c: Quantifiers" );
+        
+        layer2c_quantifiers.addObject(missingHighPriority);
+      
+      layer2d_tenses = new UI_Layer( "2d: Tenses" );
+        
+        layer2d_tenses.addObject(missingHighPriority);
+      
+      layer2e_valency = new UI_Layer( "2e: Valency" );
+        
+        layer2e_valency.addObject(missingMediumPriority);
+      
+      layer2f_testing = new UI_Layer( "2f: Testing" );
+        
+        layer2f_testing.addObject(missingLowPriority);
+    
+      layer2Switch = new UI_LayerSwitch(new Vector2(10,40),new Vector2(width-20,height-50));
+      layer2Switch.addLayer(layer2a_rootWords);
+      layer2Switch.addLayer(layer2b_wordOrder);
+      layer2Switch.addLayer(layer2c_quantifiers);
+      layer2Switch.addLayer(layer2d_tenses);
+      layer2Switch.addLayer(layer2e_valency);
+      layer2Switch.addLayer(layer2f_testing);
+      layer2_protolanguage.addObject(layer2Switch);
     
     
-    layer3_dummy = new UI_Layer( "3: Dummy" );
+    layer3_ = new UI_Layer( "3: Dummy" );
     
     
     mainLayerSwitch = new UI_LayerSwitch(new Vector2(5,5),new Vector2(width-10,height-10));
     mainLayerSwitch.addLayer(layer0_data);
     mainLayerSwitch.addLayer(layer1_phonology);
-    mainLayerSwitch.addLayer(layer2_dummy);
-    mainLayerSwitch.addLayer(layer3_dummy);
+    mainLayerSwitch.addLayer(layer2_protolanguage);
+    mainLayerSwitch.addLayer(layer3_);
     addUiElement(mainLayerSwitch);
     
     backButton = new UI_Button( new Vector2(width-215,height-45),new Vector2(200,30),"Back to Menu",true );
@@ -163,7 +233,9 @@ public class CreationScene extends Scene{
     }
     if(confirmPhoneticResultsButton.getTrigger()){
       println("Confirmed Phonetics");
-      //////////////////////////////////////// /////////////////////////////////
+      rootWordEditor.wordInput.keyboard.soundBtn = new ArrayList<UI_Button>(); 
+      rootWordEditor.wordInput.keyboard.importSounds(resultPhonologyConsonantTable.toList());
+      rootWordEditor.wordInput.keyboard.importSounds(resultPhonologyVowelTable.toList());
     }
   }
   
