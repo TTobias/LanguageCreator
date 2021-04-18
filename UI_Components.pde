@@ -43,108 +43,199 @@ public class UIObject{
 
 
 
-
-
-
-
-
-
-
 //Vocabulary List
 public class UI_VocabularyList extends UIObject{
   public Vector2 position;
   public Vector2 expanse;
   
-  public UI_VocabularyList(Vector2 pos, Vector2 exp){ 
+  public UI_TextInputField searchInput;
+  public UI_Button searchButton;
+  
+  public ArrayList<UI_Checkbox> filterBoxes;
+  public String searchFilter = "";
+  
+  public UI_Scrollwheel scrollwheel;
+  public int shift = 0;
+  
+  public ArrayList<WordTranslation> list;
+  
+  public boolean changed = false;
+  public WordTranslation selection = null;
+  public int hovered = -1;
+  
+  public UI_VocabularyList(Vector2 pos, Vector2 exp, UI_InputKeyboard k){ 
     position = pos;
     expanse = exp;
+    
+    searchInput = new UI_TextInputField( new Vector2(position.x+expanse.x*0.02, position.y+expanse.y*0.955), new Vector2(expanse.x*0.75, expanse.y*0.04), "Searchword", k, false);
+    searchButton = new UI_Button( new Vector2(position.x+expanse.x*0.78, position.y+expanse.y*0.955), new Vector2(expanse.x*0.2, expanse.y*0.04), " Search", true);
+    
+    scrollwheel = new UI_Scrollwheel(new Vector2(position.x+expanse.x*0.97, position.y+expanse.y*0.095), new Vector2(expanse.x*0.03, expanse.y*0.855) ,true);
+    
+    filterBoxes = new ArrayList<UI_Checkbox>();
+    filterBoxes.add( new UI_Checkbox(new Vector2(position.x+expanse.x*0.01, position.y+expanse.y*0.01),  new Vector2(expanse.x*0.23, expanse.y*0.03), " Nouns", true) );
+    filterBoxes.add( new UI_Checkbox(new Vector2(position.x+expanse.x*0.25, position.y+expanse.y*0.01),  new Vector2(expanse.x*0.24, expanse.y*0.03), " Verbs", true) );
+    filterBoxes.add( new UI_Checkbox(new Vector2(position.x+expanse.x*0.50, position.y+expanse.y*0.01),  new Vector2(expanse.x*0.24, expanse.y*0.03), " Adjectives", true) );
+    filterBoxes.add( new UI_Checkbox(new Vector2(position.x+expanse.x*0.75, position.y+expanse.y*0.01),  new Vector2(expanse.x*0.24, expanse.y*0.03), " Pers. Pronouns", true) );
+    filterBoxes.add( new UI_Checkbox(new Vector2(position.x+expanse.x*0.01, position.y+expanse.y*0.055), new Vector2(expanse.x*0.23, expanse.y*0.03), " ?", true) );
+    filterBoxes.add( new UI_Checkbox(new Vector2(position.x+expanse.x*0.25, position.y+expanse.y*0.055), new Vector2(expanse.x*0.24, expanse.y*0.03), " ?", true) );
+    filterBoxes.add( new UI_Checkbox(new Vector2(position.x+expanse.x*0.50, position.y+expanse.y*0.055), new Vector2(expanse.x*0.24, expanse.y*0.03), " ?", true) );
+    filterBoxes.add( new UI_Checkbox(new Vector2(position.x+expanse.x*0.75, position.y+expanse.y*0.055), new Vector2(expanse.x*0.24, expanse.y*0.03), " ?", true) );
+    
+    reloadWords();
+  }
+  
+  public void reloadWords(){
+    list = new ArrayList<WordTranslation>();
+    
+    //Words are loaded from the languageData Word List
+    for(int i = 0; i<languageData.wordlist.size(); i++){
+      WordTranslation tmp = languageData.wordlist.get(i);
+      //FILTER TYPES
+      println(tmp.word,tmp.translation,searchFilter);
+      if(tmp.wordtype == -1 || filterBoxes.get(tmp.wordtype).state ){
+        if(searchFilter.equals("") || tmp.word.indexOf(searchFilter) != -1 || tmp.translation.indexOf(searchFilter) != -1){
+          list.add(tmp);
+        }
+      }
+    }
+    
+    uiRefreshed = true;
+    shift = 0;
+  }
+  
+  public void draw() {
+    searchInput.draw();
+    searchButton.draw();
+    scrollwheel.draw();
+    for(int i = 0; i<filterBoxes.size() ; i++){
+      filterBoxes.get(i).draw();
+    }
+    
+    //List
+    int old = hovered;
+    if(mouseX > position.x+expanse.x*0.01 && mouseX < position.x+expanse.x*0.96){
+      if(mouseY > position.y+expanse.y*0.1 && mouseY < position.y+expanse.y*0.95){
+        if( (mouseY -position.y-expanse.y*0.1)%(expanse.y*0.1) < expanse.y*0.095 ){
+          hovered = int((mouseY -position.y-expanse.y*0.1)/(expanse.y*0.1)) + shift;
+        }else{
+          hovered = -1;
+        }
+      }else{
+        hovered = -1;
+      }
+    }else{
+      hovered = -1;
+    }
+    if(old != hovered){
+      uiRefreshed = true; 
+    }
   }
   
   public void show(){
+    //background
     stroke(0);
     fill(ColorCode.guiTextBackground);
     rect(position.x,position.y,expanse.x,expanse.y);
-  }
-}
-
-
-//Word Editor
-public class UI_WordEditor extends UIObject{
-  public Vector2 position;
-  public Vector2 expanse;
-  
-  public UI_TextInputField wordInput;
-  public UI_Button randomButton;
-  public UI_SwitchcaseButton wordTypeSelection;
-  public UI_TextInputField translationInput;
-  public UI_Text translationText;
-  public UI_Text rootwordText;
-  public UI_Text pronounciationText;
-  public UI_Text syllableAnalysisText;
-  public UI_Button confirmButton;
-  
-  public UI_WordEditor(Vector2 pos, Vector2 exp, UI_InputKeyboard k){ 
-    position = pos;
-    expanse = exp;
     
-    wordInput = new UI_TextInputField(new Vector2(pos.x+expanse.x*0.02,position.y+expanse.y*0.02), new Vector2(expanse.x*0.7,expanse.y*0.1),"Word",k,false);
-    randomButton = new UI_Button(new Vector2(pos.x+expanse.x*0.74,position.y+expanse.y*0.03), new Vector2(expanse.x*0.24,expanse.y*0.08)," Random",true);
-    wordTypeSelection = new UI_SwitchcaseButton(new Vector2(pos.x+expanse.x*0.02,position.y+expanse.y*0.15), new Vector2(expanse.x*0.35,expanse.y*0.82));
-    translationText = new UI_Text(new Vector2(pos.x+expanse.x*0.38,position.y+expanse.y*0.16), new Vector2(expanse.x*0.2,expanse.y*0.06), "Translation:");;
-    translationInput = new UI_TextInputField(new Vector2(pos.x+expanse.x*0.38,position.y+expanse.y*0.22), new Vector2(expanse.x*0.6,expanse.y*0.1), "Translation",true);
-    rootwordText = new UI_Text(new Vector2(pos.x+expanse.x*0.38,position.y+expanse.y*0.34), new Vector2(expanse.x*0.6,expanse.y*0.08), "Root: [None]");
-    pronounciationText = new UI_Text(new Vector2(pos.x+expanse.x*0.38,position.y+expanse.y*0.44), new Vector2(expanse.x*0.6,expanse.y*0.2), "Pronounciation:");
-    syllableAnalysisText = new UI_Text(new Vector2(pos.x+expanse.x*0.38,position.y+expanse.y*0.66), new Vector2(expanse.x*0.6,expanse.y*0.16),"Syllable Analysis:");
-    confirmButton = new UI_Button(new Vector2(pos.x+expanse.x*0.45,position.y+expanse.y*0.87), new Vector2(expanse.x*0.45,expanse.y*0.1)," Confirm",true);
-  }
-  
-  public void draw(){
-    wordInput.draw();
-    randomButton.draw();
-    wordTypeSelection.draw();
-    translationInput.draw();
-    confirmButton.draw();
-  }
-  
-  public void show(){
-    stroke(0);
-    fill(ColorCode.guiInactive);
-    rect(position.x,position.y,expanse.x,expanse.y);
-    
-    wordInput.show();
-    randomButton.show();
-    wordTypeSelection.show();
-    translationText.show();
-    translationInput.show();
-    rootwordText.show();
-    pronounciationText.show();
-    syllableAnalysisText.show();
-    confirmButton.show();
-  }
-  
-  public void onMouseDown(){
-    wordInput.onMouseDown();
-    randomButton.onMouseDown();
-    wordTypeSelection.onMouseDown();
-    translationInput.onMouseDown();
-    confirmButton.onMouseDown();
-    
-    //ButtonFunctions
-    /*
-    if(randomButton.getTrigger()){
-      //
+    //List
+    for(int i = shift; i<shift+9; i++){
+      if(i < list.size()){
+        showListObject(position.x+expanse.x*0.01,position.y+expanse.y*(0.1+ (i-shift)*0.1),expanse.x*0.95,expanse.y*0.09,i);
+      }
     }
-    if(confirmButton.getTrigger()){
-      //
-    }*/
+    
+    //Overlay
+    fill(ColorCode.guiInactive);
+    rect(position.x,position.y,expanse.x,expanse.y*0.095); //Filter
+    rect(position.x,position.y+expanse.y*0.95,expanse.x,expanse.y*0.05); //Search
+    
+    //Reference
+    searchInput.show();
+    searchButton.show();
+    scrollwheel.show();
+    for(int i = 0; i<filterBoxes.size() ; i++){
+      filterBoxes.get(i).show();
+    }
+  }
+  
+  public void showListObject(float posx, float posy, float expx, float expy, int index){
+    stroke(0);
+    if(list.get(index) == selection){
+      fill(ColorCode.blue);
+    }else if(hovered == index){
+      fill(ColorCode.cyan);
+    }else{
+      fill(ColorCode.white);
+    }
+    rect(posx,posy,expx,expy);
+    
+    fill(ColorCode.guiText);
+    textSize(expy*0.3);
+    text( list.get(index).word, posx+expx*0.02,posy+expy*0.33);
+    text( list.get(index).translation, posx+expx*0.02,posy+expy*0.68);
+    text( WordType.toString(list.get(index).wordtype), posx+expx*0.02,posy+expy*0.97);
+  }
+  
+  public void onMouseDown() {
+    searchInput.onMouseDown();
+    searchButton.onMouseDown();
+    scrollwheel.onMouseDown();
+    for(int i = 0; i<filterBoxes.size() ; i++){
+      filterBoxes.get(i).onMouseDown();
+    }
+    
+    //List
+    if(hovered > -1 && hovered < list.size()){
+      selection = list.get(hovered);
+      changed = true;
+      uiRefreshed = true;
+    }
+    
+    //Buttons
+    if(searchButton.getTrigger()){
+      println("Updated Search Filter");
+      searchFilter = searchInput.text;
+      reloadWords();
+    }
+    for(int i = 0; i<filterBoxes.size() ; i++){
+      if( filterBoxes.get(i).getTrigger() ){
+        println("Updated Filter");
+        reloadWords();
+      }
+    }
+  }
+  
+  public void onScrollUp(){
+    if(list.size() >= 9){
+      if(shift < list.size()-8){
+        shift++;
+        uiRefreshed = true;
+      }
+    }
+  }
+  
+  public void onScrollDown(){
+    if(list.size() >= 9){
+      if(shift > 0){
+        shift--;
+        uiRefreshed = true;
+      }
+    }
   }
   
   public void onKeyDown(){
-    translationInput.onKeyDown();
-    wordInput.onKeyDown();
+    searchInput.onKeyDown();
+  }
+  
+  public boolean getTrigger(){
+    if(changed){
+      changed = false;
+      return true;
+    }
+    return false;
   }
 }
-
 
 
 //Scrollwheel panel
@@ -164,25 +255,6 @@ public class UI_Scrollwheel extends UIObject{
   public void show(){
     stroke(0);
     fill(ColorCode.guiInactive);
-    rect(position.x,position.y,expanse.x,expanse.y);
-  }
-}
-
-
-
-//Panel with multiple Buttons of which 1 (or 0?) can be selected (basically multiple choice)
-public class UI_SwitchcaseButton extends UIObject{
-  public Vector2 position;
-  public Vector2 expanse;
-  
-  public UI_SwitchcaseButton(Vector2 pos, Vector2 exp){ 
-    position = pos;
-    expanse = exp;
-  }
-  
-  public void show(){
-    stroke(0);
-    fill(ColorCode.guiTextBackground);
     rect(position.x,position.y,expanse.x,expanse.y);
   }
 }

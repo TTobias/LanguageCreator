@@ -55,6 +55,7 @@ public class CreationScene extends Scene{
     public UI_MultiText rootWordMultiText;
     public UI_VocabularyList rootWordVocabularyList;
     public UI_WordEditor rootWordEditor;
+    public UI_InputKeyboard layer2a_keyboard;
   public UI_Layer layer2b_wordOrder;
   public UI_Layer layer2c_quantifiers;
   public UI_Layer layer2d_tenses;
@@ -149,8 +150,9 @@ public class CreationScene extends Scene{
         rootWordMultiText.addPage( " Main Roots", "Important root words not added yet" );
         addNewRootWordButton = new UI_Button(new Vector2(15,305),new Vector2(300,40), "new Word",true);
         appendRootWordButton = new UI_Button(new Vector2(415,305),new Vector2(300,40), "append Word",true);
-        rootWordVocabularyList = new  UI_VocabularyList(new Vector2(725,75),new Vector2(650,750));
-        rootWordEditor = new UI_WordEditor(new Vector2(15,350),new Vector2(700,380), new UI_InputKeyboard(new Vector2(15,740),new Vector2(700,130),resultPhonologyConsonantTable,resultPhonologyVowelTable));
+        layer2a_keyboard = new UI_InputKeyboard(new Vector2(15,740),new Vector2(700,130),resultPhonologyConsonantTable,resultPhonologyVowelTable);
+        rootWordVocabularyList = new  UI_VocabularyList(new Vector2(725,75),new Vector2(650,750), layer2a_keyboard);
+        rootWordEditor = new UI_WordEditor(new Vector2(15,350),new Vector2(700,380), layer2a_keyboard);
         
         layer2a_rootWords.addObject(addNewRootWordButton);
         layer2a_rootWords.addObject(appendRootWordButton);
@@ -233,9 +235,28 @@ public class CreationScene extends Scene{
     }
     if(confirmPhoneticResultsButton.getTrigger()){
       println("Confirmed Phonetics");
-      rootWordEditor.wordInput.keyboard.soundBtn = new ArrayList<UI_Button>(); 
-      rootWordEditor.wordInput.keyboard.importSounds(resultPhonologyConsonantTable.toList());
-      rootWordEditor.wordInput.keyboard.importSounds(resultPhonologyVowelTable.toList());
+      confirmPhonetics();
+    }
+    
+    //LAYER2
+    if(rootWordEditor.getTrigger()){
+      println("Changed the wordlist");
+      rootWordVocabularyList.reloadWords();
+    }
+    if(addNewRootWordButton.getTrigger()){
+      println("Add new Word");
+      rootWordEditor.reset();
+    }
+    if(appendRootWordButton.getTrigger()){
+      println("Append Word to the List");
+      rootWordEditor.word = new WordTranslation(rootWordEditor.wordInput.text, rootWordEditor.translationInput.text, rootWordEditor.wordTypeSelection.selected);
+      languageData.wordlist.add( rootWordEditor.word );
+      rootWordVocabularyList.reloadWords();
+      rootWordEditor.reset();
+    }
+    if(rootWordVocabularyList.getTrigger()){
+      println("Set Word As \"Active to Edit\"");
+      rootWordEditor.setWord( rootWordVocabularyList.selection );
     }
   }
   
@@ -266,5 +287,29 @@ public class CreationScene extends Scene{
     resultPhonotacticalStressingText.text = "Default Word Stressing Position :\n"+primaryStressingPositionField.value+
           "'nd syllable of each word.\n\nIf the word has less syllables:\nThe closest one.";
     resultPhonotacticalStressingText.textSize = 18;
+  }
+  
+  public void confirmPhonetics(){
+    //Add those infos to the languageData
+    languageData.vowels = resultPhonologyVowelTable.toList();
+    languageData.consonants = resultPhonologyConsonantTable.toList();
+    
+    languageData.onsetAmount = syllableShapeEditor.onsetAmount;
+    languageData.nucleusAmount = syllableShapeEditor.doubleNucleus?2:1;
+    languageData.codaAmount = syllableShapeEditor.codaAmount;
+    
+    languageData.onsetOptions = new StringList[languageData.onsetAmount];
+    languageData.nucleusOptions = new StringList[languageData.nucleusAmount];
+    languageData.codaOptions = new StringList[languageData.codaAmount];
+    for(int i = 0; i<languageData.onsetAmount; i++)  { languageData.onsetOptions[i]   = syllableShapeEditor.onsetDetails.get(i).toList();   }
+    for(int i = 0; i<languageData.nucleusAmount; i++){ languageData.nucleusOptions[i] = syllableShapeEditor.nucleusDetails.get(i).toList(); }
+    for(int i = 0; i<languageData.codaAmount; i++)   { languageData.codaOptions[i]    = syllableShapeEditor.codaDetails.get(i).toList();    }
+    
+    languageData.stressingPosition = primaryStressingPositionField.value;
+    
+    //Rootword
+    rootWordEditor.wordInput.keyboard.soundBtn = new ArrayList<UI_Button>(); 
+    rootWordEditor.wordInput.keyboard.importSounds(languageData.consonants);
+    rootWordEditor.wordInput.keyboard.importSounds(languageData.vowels);
   }
 }

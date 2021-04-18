@@ -4,6 +4,7 @@
 public SceneManager sceneManager;
 public void settings(){
   size(1400,900);
+  languageData = new LanguageData();
   sceneManager = new SceneManager();
 }
 

@@ -141,10 +141,239 @@ public <T> ArrayList<T> copyAndExtend(ArrayList<T> ls, T t){
 }
 
 
+public LanguageData languageData;
+public class LanguageData{
+  //SOUNDS
+  public StringList vowels = new StringList();
+  public StringList consonants = new StringList();
+  
+  //SYLLABLE
+  public int onsetAmount = 0;
+  public int nucleusAmount = 0;
+  public int codaAmount = 0;
+  public StringList[] onsetOptions = new StringList[0];
+  public StringList[] nucleusOptions = new StringList[0];;
+  public StringList[] codaOptions = new StringList[0];;
+  //public ArrayList<SyllableExceptions>;
 
-public void 
+  //STRESSING
+  public int stressingPosition = 1;
+  
+  //WORDS
+  public ArrayList<WordTranslation> wordlist = new ArrayList<WordTranslation>();
+  
+  //GRAMMAR
+  
+  
+  //EXTERN
+  public String[][] simplifiedSounds;
+  
+  //DATA
+  public String filepath = "languages/";
+  public String projectpath = "temp";
+  
+  public LanguageData(){ 
+    simplifiedSounds = new String[2][102];
+    
+    int tmp = 0;
+    String[] dat = loadStrings("data/phonetic_consonant_table.txt");
+    int offset = int(split(dat[0],' ')[1]);
+    for(int i = offset+1; i<dat.length; i++){
+      if((i-offset-1)%offset != 0 && !dat[i].equals("")){
+        simplifiedSounds[0][tmp] = split(dat[i],' ')[0];
+        simplifiedSounds[1][tmp] = split(dat[i],' ')[1];
+        tmp++;
+      }
+    }
+    dat = loadStrings("data/phonetic_vowel_table.txt");
+    offset = int(split(dat[0],' ')[1]);
+    for(int i = offset+1; i<dat.length; i++){
+      if((i-offset-1)%offset != 0 && !dat[i].equals("")){
+        simplifiedSounds[0][tmp] = split(dat[i],' ')[0];
+        simplifiedSounds[1][tmp] = split(dat[i],' ')[1];
+        tmp++;
+      }
+    }
+  }
 
 
+  public String subdivideWordToSyllables(String t){
+    char[] tmp = t.toCharArray();
+    String out = "";
+    
+    String syl = "";
+    int part = 0; //0:onset, 1:nucleus, 2:coda
+    int counter = 0; //counts how often the part is in use
+    boolean looped  = false;
+    for(int i = 0; i<tmp.length;i++){
+      boolean b = false; //set to true for continue
+      println(tmp[i],part,counter,syl,out);
+      
+      if(part == 0){
+        for(int c = counter; c < onsetOptions.length; c++){
+          if(onsetOptions[counter].hasValue(tmp[i]+"")){
+            syl += tmp[i];
+            b = true;
+            counter = c+1;
+            break;
+          }
+        }
+        println("no onset");
+        
+        if(counter >= onsetOptions.length || !b){
+          part = 1;
+          counter = 0;
+        }
+      }
+      if(part == 1){
+        for(int c = counter; c < nucleusOptions.length; c++){
+          if(nucleusOptions[counter].hasValue(tmp[i]+"")){
+            syl += tmp[i];
+            b = true;
+            counter = c+1;
+            break;
+          }
+        }
+        println("no nucleus");
+        
+        if(counter >= nucleusOptions.length || !b){
+          part = 2;
+          counter = 0;
+        }if(b){continue;}
+      }
+      if(part == 2){
+        for(int c = counter; c < codaOptions.length; c++){
+          if(codaOptions[counter].hasValue(tmp[i]+"")){
+            syl += tmp[i];
+            b = true;
+            counter = c+1;
+            break;
+          }
+        }
+        println("no coda");
+        
+        if(counter >= codaOptions.length){
+          part = 0;
+          counter = 0;
+          
+          if(syl.equals("")){
+            //ERROR///////////////////////
+            syl = "Error";
+          }
+          out+=syl;
+          syl = "";
+          if(i+1 < tmp.length){ out += " - "; }
+        }if(b){continue;}
+      }
+      
+      if(looped){looped = false;continue;}
+      looped = true; i--;//Causes a loop
+    }
+    if(!syl.equals("")){
+      out+=syl;
+    }
+    
+    return out;
+  }
+  
+  public String convertToSimplifiedPronounciation(String t){
+    char[] tmp = t.toCharArray();
+    String out = "";
+    for(int i = 0; i<tmp.length ; i++){
+      for(int s = simplifiedSounds[0].length-1; s>=0 ; s--){ //Reversed order since affricated must be checked (At some point i'll add this)
+        if(simplifiedSounds[0][s].equals(""+tmp[i])){
+          out += simplifiedSounds[1][s];
+          break;
+        }
+      }
+    }
+    
+    return out;
+  }
+  
+  public String generateRandomWord(){
+    String out = "";
+    int syls = floor(random(1,3.9999))+floor(random(0,2.9999));
+    
+    for(int i = 0; i<syls; i++){
+      for(int a = 0; a<onsetAmount;a++){
+        if(random(0,100) < 60){
+          out += onsetOptions[a].get( floor( random(0,0.999+ onsetOptions[a].size() -1) ) );
+        }
+      }
+      for(int a = 0; a<nucleusAmount;a++){
+        if(a == 0 || random(0,100) < 30){
+          out += nucleusOptions[a].get( floor( random(0,0.999+ nucleusOptions[a].size() -1) ) );
+        }
+      }
+      for(int a = 0; a<codaAmount;a++){
+        if(random(0,100) < 40){
+          out += codaOptions[a].get( floor( random(0,0.999+ codaOptions[a].size() -1) ) );
+        }
+      }
+    }
+    
+    return out;
+  }
+  
+  /*
+  public void loadFromFile(){
+    println( "LOAD LANGUAGE DATA FROM FILE");
+  }
+  
+  public void saveToFile(){
+    println( "SAVE LANGUAGE DATA TO FILE");
+    
+    //SOUNDS
+    public StringList vowels = new StringList();
+    public StringList consonants = new StringList();
+    
+    //SYLLABLE
+    public int onsetAmount = 0;
+    public int nucleusAmount = 0;
+    public int codaAmount = 0;
+    public StringList[] onsetOptions = new StringList[0];
+    public StringList[] nucleusOptions = new StringList[0];;
+    public StringList[] codaOptions = new StringList[0];;
+    //public ArrayList<SyllableExceptions>;
+  
+    //STRESSING
+    public int stressingPosition = 1;
+    
+    //WORDS
+    public ArrayList<WordTranslation> wordlist = new ArrayList<WordTranslation>();
+    
+    //GRAMMAR
+    
+    
+    //EXTERN
+    public String[][] simplifiedSounds;
+    
+    //DATA
+    public String filepath = "languages/";
+    public String projectpath = "temp";
+  }*/
+}
+
+
+public static class WordType{
+  public static int NOUN = 0;
+  public static int VERB = 1;
+  public static int ADJECTIVE = 2;
+  public static int PERSPRONOUN = 3;
+  
+  public static int OTHER = -1;
+  
+  public static String toString(int i){
+    switch(i){
+      default:return "Other";
+      case(0):return "Noun";
+      case(1):return "Verb";
+      case(2):return "Adjective";
+      case(3):return "Pers. Pronoun";
+    }
+  }
+}
 
 
 
@@ -152,4 +381,18 @@ public void
 public class WordTranslation{
   public String word;
   public String translation;
+  
+  public int wordtype;
+  
+  public WordTranslation(String w, String tr, int type){
+    word = w;
+    translation = tr;
+    wordtype = type;
+  }
+  
+  public void update(String w, String tr, int type){
+    word = w;
+    translation = tr;
+    wordtype = type;
+  }
 }

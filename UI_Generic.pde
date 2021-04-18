@@ -571,7 +571,7 @@ public class UI_TextInputField extends UIObject{
           uiRefreshed = true;
         }
       }
-      if(key == ENTER){
+      if(key == ENTER || key == RETURN){
         updateText();
         uiRefreshed = true;
       }
@@ -627,5 +627,75 @@ public class UI_TextInputField extends UIObject{
       return true;
     }
     return false;
+  }
+}
+
+
+
+//Panel with multiple Buttons of which 1 (or 0?) can be selected (basically multiple choice)
+public class UI_SwitchcaseButton extends UIObject{
+  public Vector2 position;
+  public Vector2 expanse;
+  
+  public ArrayList<UI_Button> buttons;
+  public int selected = -1;
+  
+  public UI_SwitchcaseButton(Vector2 pos, Vector2 exp){ 
+    position = pos;
+    expanse = exp;
+    
+    buttons = new ArrayList<UI_Button>();
+    selected = -1;
+  }
+  
+  public void addButton(UI_Button btn){
+    buttons.add(btn);
+  }
+  
+  public void draw(){
+    for(int i = 0; i<buttons.size(); i++){
+      buttons.get(i).draw();
+    }
+  }
+  
+  public void show(){
+    stroke(0);
+    fill(ColorCode.guiTextBackground);
+    rect(position.x,position.y,expanse.x,expanse.y);
+    
+    for(int i = 0; i<buttons.size(); i++){
+      buttons.get(i).show();
+    }
+    
+    if(selected >= 0 && selected < buttons.size()){
+      strokeWeight(5);
+      stroke(ColorCode.red);
+      UI_Button tmp = buttons.get(selected);
+      line(tmp.position.x,tmp.position.y,tmp.position.x+tmp.expanse.x,tmp.position.y);
+      line(tmp.position.x,tmp.position.y,tmp.position.x,tmp.position.y+tmp.expanse.y);
+      line(tmp.position.x+tmp.expanse.x,tmp.position.y,tmp.position.x+tmp.expanse.x,tmp.position.y+tmp.expanse.y);
+      line(tmp.position.x,tmp.position.y+tmp.expanse.y,tmp.position.x+tmp.expanse.x,tmp.position.y+tmp.expanse.y);
+      strokeWeight(1);
+    }
+  }
+  
+  public void onMouseDown(){
+    for(int i = 0; i<buttons.size(); i++){
+      buttons.get(i).onMouseDown();
+      
+      if(buttons.get(i).getTrigger()){
+        if(i != selected){
+          selected = i;
+        }else{selected = -1;}
+      }
+    }
+  }
+  
+  public String getSelected(){
+    if(selected >= 0 && selected < buttons.size()){
+      return buttons.get(selected).text;
+    }else{
+      return "";
+    }
   }
 }

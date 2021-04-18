@@ -484,6 +484,21 @@ public class UI_SyllablePartEditor extends UIObject{
       return (minus == ""? "" : "No "+trim(minus)+" Sounds " )+(only==""?"" : "only "+only);
     }
   }
+  
+  public StringList toList(){
+    StringList tmp = new StringList();
+    
+    for(int i = 0; i < soundtypes.size() ; i++){
+      if(soundtypes.get(i).state){
+        for(int s = 0; s < sounds.get(i).size() ; s++){
+          if(sounds.get(i).get(s).state){
+            tmp.append(sounds.get(i).get(s).text);
+          }
+        }
+      }
+    }
+    return tmp;
+  }
 }
 
 
@@ -745,5 +760,157 @@ public class UI_InputKeyboard extends UIObject{
     output = "";
     isEnter = false;
     isBack = false;
+  }
+}
+
+
+
+//Word Editor
+public class UI_WordEditor extends UIObject{
+  public Vector2 position;
+  public Vector2 expanse;
+  
+  public UI_TextInputField wordInput;
+  public UI_Button randomButton;
+  public UI_SwitchcaseButton wordTypeSelection;
+  public UI_TextInputField translationInput;
+  public UI_Text translationText;
+  public UI_Text rootwordText;
+  public UI_Text pronounciationText;
+  public UI_Text syllableAnalysisText;
+  public UI_Button confirmButton;
+  public UI_Button deleteButton;
+  
+  public boolean changed = false; //for adding and removing words
+  public WordTranslation word = null;
+  
+  public UI_WordEditor(Vector2 pos, Vector2 exp, UI_InputKeyboard k){ 
+    position = pos;
+    expanse = exp;
+    
+    wordInput = new UI_TextInputField(new Vector2(pos.x+expanse.x*0.02,position.y+expanse.y*0.02), new Vector2(expanse.x*0.7,expanse.y*0.1),"Word",k,false);
+    randomButton = new UI_Button(new Vector2(pos.x+expanse.x*0.74,position.y+expanse.y*0.03), new Vector2(expanse.x*0.24,expanse.y*0.08)," Random",true);
+    wordTypeSelection = new UI_SwitchcaseButton(new Vector2(pos.x+expanse.x*0.02,position.y+expanse.y*0.15), new Vector2(expanse.x*0.35,expanse.y*0.82));
+    translationText = new UI_Text(new Vector2(pos.x+expanse.x*0.38,position.y+expanse.y*0.16), new Vector2(expanse.x*0.2,expanse.y*0.06), "Translation:");;
+    translationInput = new UI_TextInputField(new Vector2(pos.x+expanse.x*0.38,position.y+expanse.y*0.22), new Vector2(expanse.x*0.6,expanse.y*0.1), "Translation",true);
+    rootwordText = new UI_Text(new Vector2(pos.x+expanse.x*0.38,position.y+expanse.y*0.34), new Vector2(expanse.x*0.6,expanse.y*0.08), "Root: [None]");
+    pronounciationText = new UI_Text(new Vector2(pos.x+expanse.x*0.38,position.y+expanse.y*0.44), new Vector2(expanse.x*0.6,expanse.y*0.2), "Pronounciation:\n\n");
+    syllableAnalysisText = new UI_Text(new Vector2(pos.x+expanse.x*0.38,position.y+expanse.y*0.66), new Vector2(expanse.x*0.6,expanse.y*0.16),"Syllable Analysis:\n");
+    confirmButton = new UI_Button(new Vector2(pos.x+expanse.x*0.4,position.y+expanse.y*0.87), new Vector2(expanse.x*0.28,expanse.y*0.1)," Confirm",true);
+    deleteButton = new UI_Button(new Vector2(pos.x+expanse.x*0.7,position.y+expanse.y*0.87), new Vector2(expanse.x*0.28,expanse.y*0.1)," Delete",true);
+    
+    wordTypeSelection.addButton( new UI_Button(new Vector2(pos.x+expanse.x*0.04,position.y+expanse.y*0.2), new Vector2(expanse.x*0.31,expanse.y*0.08),"Noun",true) );
+    wordTypeSelection.addButton( new UI_Button(new Vector2(pos.x+expanse.x*0.04,position.y+expanse.y*0.3), new Vector2(expanse.x*0.31,expanse.y*0.08),"Verb",true) );
+    wordTypeSelection.addButton( new UI_Button(new Vector2(pos.x+expanse.x*0.04,position.y+expanse.y*0.4), new Vector2(expanse.x*0.31,expanse.y*0.08),"Adjective",true) );
+    wordTypeSelection.addButton( new UI_Button(new Vector2(pos.x+expanse.x*0.04,position.y+expanse.y*0.5), new Vector2(expanse.x*0.31,expanse.y*0.08),"Personal Pronoun",true) );
+    wordTypeSelection.addButton( new UI_Button(new Vector2(pos.x+expanse.x*0.04,position.y+expanse.y*0.6), new Vector2(expanse.x*0.31,expanse.y*0.08),"Other",true) );
+  }
+  
+  public void setWord( WordTranslation wt){
+    word = wt;
+    
+    wordInput.text = word.word;
+    wordTypeSelection.selected = word.wordtype == -1?5:word.wordtype;
+    translationInput.text = word.translation;
+    rootwordText.text = "Root: [None]";
+    pronounciationText.text = " Pronounciation:\n  "+word.word+"\n  "+languageData.convertToSimplifiedPronounciation(word.word);
+    syllableAnalysisText.text = " Syllable Analysis:\n  "+languageData.subdivideWordToSyllables(word.word);
+    
+    uiRefreshed = true;
+  }
+  
+  public void draw(){
+    wordInput.draw();
+    randomButton.draw();
+    wordTypeSelection.draw();
+    translationInput.draw();
+    confirmButton.draw();
+    deleteButton.draw();
+  }
+  
+  public void show(){
+    stroke(0);
+    fill(ColorCode.guiInactive);
+    rect(position.x,position.y,expanse.x,expanse.y);
+    
+    wordInput.show();
+    randomButton.show();
+    wordTypeSelection.show();
+    translationText.show();
+    translationInput.show();
+    rootwordText.show();
+    pronounciationText.show();
+    syllableAnalysisText.show();
+    confirmButton.show();
+    deleteButton.show();
+  }
+  
+  public void onMouseDown(){
+    wordInput.onMouseDown();
+    randomButton.onMouseDown();
+    wordTypeSelection.onMouseDown();
+    translationInput.onMouseDown();
+    confirmButton.onMouseDown();
+    deleteButton.onMouseDown();
+    
+    //ButtonFunctions
+    if(randomButton.getTrigger()){
+      println("Generate random word");
+      wordInput.text = languageData.generateRandomWord();
+      wordInput.changed = true;
+    }
+    if(confirmButton.getTrigger()){
+      if(word == null){
+        //NOTHING
+      }else{
+        println("Updated Word");
+        word.update( wordInput.text, translationInput.text, wordTypeSelection.selected );
+        changed = true;
+      }
+    }
+    if(deleteButton.getTrigger()){
+      if(word == null){
+        reset();
+      }else{
+        println("Removed Word");
+        languageData.wordlist.remove( word );
+        reset();
+        changed = true;
+      }
+    }
+    if(wordInput.getTrigger()){ // word updated (DUPLICATE! (onMouseDown & onKeyDown))
+      println("Word updated");
+      pronounciationText.text = " Pronounciation:\n  "+wordInput.text+"\n  "+languageData.convertToSimplifiedPronounciation(wordInput.text);
+      syllableAnalysisText.text = " Syllable Analysis:\n  "+languageData.subdivideWordToSyllables(wordInput.text);
+    }
+  }
+  
+  public void reset(){
+    wordInput.text = "Word";
+    wordTypeSelection.selected = -1;
+    translationInput.text = "Translation";
+    rootwordText.text = "Root: [None]";
+    pronounciationText.text = "Pronounciation:\n\n";
+    syllableAnalysisText.text = "Syllable Analysis:\n";
+    word = null;
+  }
+  
+  public void onKeyDown(){
+    translationInput.onKeyDown();
+    wordInput.onKeyDown();
+    
+    if(wordInput.getTrigger()){ // word updated (DUPLICATE! (onMouseDown & onKeyDown))
+      println("Word updated");
+      pronounciationText.text = " Pronounciation:\n  "+wordInput.text+"\n  "+languageData.convertToSimplifiedPronounciation(wordInput.text);
+      syllableAnalysisText.text = " Syllable Analyis:\n  "+languageData.subdivideWordToSyllables(wordInput.text);
+    }
+  }
+  
+  public boolean getTrigger(){
+    if(changed){
+      changed = false;
+      return true;
+    }
+    return false;
   }
 }
