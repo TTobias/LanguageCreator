@@ -1,0 +1,14 @@
+8 5
+p
+b
+t
+d
+k
+n
+f
+s
+i
+u
+e
+o
+a
