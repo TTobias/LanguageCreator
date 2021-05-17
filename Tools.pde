@@ -25,6 +25,11 @@ public class Vector2{
   public float getLength(){
     return sqrt(x*x + y*y);
   }
+  
+  public void setToMouse(){
+    x = mouseX;
+    y = mouseY;
+  }
 }
 
 
@@ -162,8 +167,10 @@ public class LanguageData{
   //WORDS
   public ArrayList<WordTranslation> wordlist = new ArrayList<WordTranslation>();
   
-  //GRAMMAR
-  
+  //BASE GRAMMAR
+    
+  //QUANTIFIERS
+  public ArrayList<WordModifier> quantifiers = new ArrayList<WordModifier>();
   
   //EXTERN
   public String[][] simplifiedSounds;
@@ -373,10 +380,12 @@ public class LanguageData{
     String[] lodWords = loadStrings(filepath+projectpath+"/wordlist.txt");
     wordlist = new ArrayList<WordTranslation>();
     for(int i = 1; i<int(lodWords[0]); i++){
-      wordlist.add(new WordTranslation(split(lodWords[i]," : ")[0],split(lodWords[i]," : ")[1],int(split(lodWords[i]," : ")[1])) );
+      wordlist.add(new WordTranslation(split(lodWords[i]," : ")[0],split(lodWords[i]," : ")[1],int(split(lodWords[i]," : ")[2])) );
     }
     
-    //GRAMMAR
+    //BASE GRAMMAR
+    
+    //QUANTIFIERS
     
     
   }
@@ -479,5 +488,230 @@ public class WordTranslation{
   
   public String saveWord(){
     return word + " : " + translation + " : " + wordtype;
+  }
+}
+
+
+
+public class Quantifier{
+  public int type = -1;
+  
+}
+
+
+public static class QuantifierType{
+  public static int SINGULAR = 0;
+  public static int PLURAL = 1;
+  public static int DUAL = 2;
+  public static int NONE = 3;
+  public static int ALL = 4;
+  public static int OLIGO = 5;
+  public static int POLY = 6;
+  public static int UNKNOWN = 7; //if it'S irrelevant or unknown if plural or singular
+  public static int ANY = 8;
+  public static int SPECIFIC = 9;
+  public static int NEGATIVE = 10;
+  public static int SAME = 11;
+  public static int DIFFERENT = 12;
+  public static int TRI = 13;
+  public static int HALF = 14;
+  public static int QUARTER = 15;
+  
+  public static int OTHER = -1;
+  
+  public static String toString(int i){
+    switch(i){
+      default:return "Other";
+      case( 0):return "Singular";
+      case( 1):return "Plural";
+      case( 2):return "Dual";
+      case( 3):return "None";
+      case( 4):return "All";
+      case( 5):return "Oligo";
+      case( 6):return "Poly";
+      case( 7):return "Unknown";
+      case( 8):return "Any";
+      case( 9):return "Specific";
+      case(10):return "Negative";
+      case(11):return "Same";
+      case(12):return "Different";
+      case(13):return "Tri";
+      case(14):return "Half";
+      case(15):return "Quarter";
+    }
+  }
+  
+  public static String description(int i){
+    switch(i){
+      default:return "-";
+      case( 0):return "A single instance";
+      case( 1):return "Multiple instances ";
+      case( 2):return "Exactly two instances";
+      case( 3):return "No instance";
+      case( 4):return "All instances";
+      case( 5):return "A small amomunt of instances (~2 - 12, can vary with context)";
+      case( 6):return "A big amount of instances (~12+, can vary with context)";
+      case( 7):return "An unknown or irrelevant amount of instances";
+      case( 8):return "An unspecified instance out of all";
+      case( 9):return "A specific identified instance";
+      case(10):return "A negative amount of instances (if possible in the context)";
+      case(11):return "The same instances as refered to in earlier context";
+      case(12):return "Different instances as refered to in earlier context";
+      case(13):return "Excatly three instances";
+      case(14):return "Half of the instances";
+      case(15):return "A Quarter of the instances";
+    }
+  }
+  
+  public static int getAmount(){
+    return QUARTER; //NEEDS TO BE UPDATED WHEN ADDING NEW QUANTIFIERS
+  }
+}
+
+
+
+
+public class WordModifier{ //Used for adding Pre/Post-Syllables or modifications
+  public SyllableModifier[] modifiers; 
+  public String name = "";
+  public int nameId = -1;
+  
+  public WordModifier(SyllableModifier[] sl, String n){
+    modifiers = sl;
+    name = n;
+    //sort();
+  }
+  
+  public String toString(){
+    String tmp = "";
+    for(int i = 0; i<modifiers.length ; i++){ 
+      tmp += modifiers[i].toString();
+    }
+    return tmp;
+  }
+  
+  public void sort(){
+    SyllableModifier[] m = new SyllableModifier[modifiers.length];
+    /*
+    for(int i = 0;i<m.length;i++){
+      for(int o = 0; o < modifiers.length;o++){
+        if(modifiers[o] != null){
+          if(modifiers[o].preSyllable){
+            m[i] = modifiers[o];
+            modifiers[o] = null;
+            break;
+          }else if(modifiers[o].postSyllable){
+            
+          }else if(modifiers[o].inSyllable){
+            
+          }else { //syllable modification
+            
+          }
+        }
+      }
+    }
+    modifiers = m;*/
+  }
+}
+public class SyllableModifier{
+  public int syllablePosition = -1; //either the position, the priority (post/pre) or the inset position (after >0 else before)
+  
+  public boolean preSyllable = false;
+  public boolean postSyllable = false;
+  public boolean inSyllable = false;
+  
+  public boolean onsetFixed = false;
+  public String onsetSound = ""; //if fixed
+  public int onsetReferencePosition = -1;     //if not fixed
+  //public boolean onsetKeepCoda = true;       //if not fixed (if the coda of the previous syllable should be dropped
+  public boolean onsetCopyOnset = true;       //if not fixed (if the onset or the coda of the selected syllable should be copied)
+  
+  public boolean nucleusFixed = false;
+  public String nucleusSound = ""; //if fixed
+  public int nucleusReferencePosition = -1;    //if not fixed
+
+  public boolean codaFixed = false;
+  public String codaSound = ""; //if fixed
+  public int codaReferencePosition = -1;      //if not fixed
+  //public boolean onsetKeepCoda = true;       //if not fixed (if the coda of the previous syllable should be dropped
+  public boolean codaCopyCoda = true;       //if not fixed (if the onset or the coda of the selected syllable should be copied)
+  
+  public SyllableModifier(int type, int pos, String on, String nu, String co){ //cvc
+    preSyllable = type == 1; postSyllable = type == 2; inSyllable = type == 3;
+    syllablePosition = pos;
+    
+    onsetFixed = true;   onsetSound = on;
+    nucleusFixed = true; nucleusSound = nu;
+    codaFixed = true;    codaSound = co;
+  }
+  public SyllableModifier(int type, int pos, String on, String nu,int coP, boolean coR){ //cvC
+    preSyllable = type == 1; postSyllable = type == 2; inSyllable = type == 3;
+    syllablePosition = pos;
+    
+    onsetFixed = true;   onsetSound = on;
+    nucleusFixed = true; nucleusSound = nu;
+    codaFixed = false;   codaReferencePosition = coP; codaCopyCoda = coR;
+  }
+  public SyllableModifier(int type, int pos, String on, int nuP, String co){ //cNc
+    preSyllable = type == 1; postSyllable = type == 2; inSyllable = type == 3;
+    syllablePosition = pos;
+    
+    onsetFixed = true;   onsetSound = on;
+    nucleusFixed = false; nucleusReferencePosition = nuP;
+    codaFixed = true;    codaSound = co;
+  }
+  public SyllableModifier(int type, int pos, int onP, boolean onR, String nu, String co){ //Ovc
+    preSyllable = type == 1; postSyllable = type == 2; inSyllable = type == 3;
+    syllablePosition = pos;
+    
+    onsetFixed = false;   onsetReferencePosition = onP; onsetCopyOnset = onR;
+    nucleusFixed = true; nucleusSound = nu;
+    codaFixed = true;    codaSound = co;
+  }
+  public SyllableModifier(int type, int pos, String on, int nuP, int coP, boolean coR){ //cNC
+    preSyllable = type == 1; postSyllable = type == 2; inSyllable = type == 3;
+    syllablePosition = pos;
+    
+    onsetFixed = true;    onsetSound = on;
+    nucleusFixed = false; nucleusReferencePosition = nuP;
+    codaFixed = false;    codaReferencePosition = coP; codaCopyCoda = coR;
+  }
+  public SyllableModifier(int type, int pos, int onP, boolean onR, int nuP, String co){ //ONc
+    preSyllable = type == 1; postSyllable = type == 2; inSyllable = type == 3;
+    syllablePosition = pos;
+    
+    onsetFixed = false;   onsetReferencePosition = onP; onsetCopyOnset = onR;
+    nucleusFixed = false; nucleusReferencePosition = nuP;
+    codaFixed = true;     codaSound = co;
+  }
+  public SyllableModifier(int type, int pos, int onP, boolean onR, String nu, int coP, boolean coR){  //OvC
+    preSyllable = type == 1; postSyllable = type == 2; inSyllable = type == 3;
+    syllablePosition = pos;
+    
+    onsetFixed = false;   onsetReferencePosition = onP; onsetCopyOnset = onR;
+    nucleusFixed = true;  nucleusSound = nu;
+    codaFixed = false;    codaReferencePosition = coP; codaCopyCoda = coR;
+  }
+  public SyllableModifier(int type, int pos, int onP, boolean onR, int nuP, int coP, boolean coR){ //ONC
+    preSyllable = type == 1; postSyllable = type == 2; inSyllable = type == 3;
+    syllablePosition = pos;
+    
+    onsetFixed = false;   onsetReferencePosition = onP; onsetCopyOnset = onR;
+    nucleusFixed = false; nucleusReferencePosition = nuP;
+    codaFixed = false;    codaReferencePosition = coP; codaCopyCoda = coR;
+  }
+  
+  public String toString(){
+    String tmp = "";
+    tmp += (postSyllable || inSyllable)?"-[":"[";
+    
+    tmp += (preSyllable || postSyllable)? "": syllablePosition+"_";
+    
+    tmp += onsetFixed? onsetSound : onsetCopyOnset? "Oo"+onsetReferencePosition:"Oc";
+    tmp += nucleusFixed? nucleusSound : "N"+nucleusReferencePosition;
+    tmp += codaFixed? codaSound : codaCopyCoda? "Cc"+codaReferencePosition:"Co";
+    
+    tmp += (preSyllable || inSyllable)?"]-":"]";
+    return tmp;
   }
 }

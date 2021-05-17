@@ -639,6 +639,7 @@ public class UI_SwitchcaseButton extends UIObject{
   
   public ArrayList<UI_Button> buttons;
   public int selected = -1;
+  public boolean changed = false;
   
   public UI_SwitchcaseButton(Vector2 pos, Vector2 exp){ 
     position = pos;
@@ -680,6 +681,7 @@ public class UI_SwitchcaseButton extends UIObject{
   }
   
   public void onMouseDown(){
+    int old = selected;
     for(int i = 0; i<buttons.size(); i++){
       buttons.get(i).onMouseDown();
       
@@ -689,6 +691,7 @@ public class UI_SwitchcaseButton extends UIObject{
         }else{selected = -1;}
       }
     }
+    if(old != selected){ changed = true; }
   }
   
   public String getSelected(){
@@ -697,5 +700,13 @@ public class UI_SwitchcaseButton extends UIObject{
     }else{
       return "";
     }
+  }
+  
+  public boolean getTrigger(){
+    if(changed){
+      changed = false;
+      return true;
+    }
+    return false;
   }
 }
