@@ -572,7 +572,7 @@ public static class QuantifierType{
 
 
 public class WordModifier{ //Used for adding Pre/Post-Syllables or modifications
-  public SyllableModifier[] modifiers; 
+  public SyllableModifier[] modifiers = new SyllableModifier[0]; 
   public String name = "";
   public int nameId = -1;
   

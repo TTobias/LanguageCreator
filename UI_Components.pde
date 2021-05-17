@@ -553,15 +553,15 @@ public class UI_QuantifierEditor extends UIObject{
     onsetTextInput = new UI_TextInputField(new Vector2(position.x+expanse.x*0.25,position.y+expanse.y*0.52), new Vector2(expanse.x*0.1, expanse.y*0.06),"",keyboard,true);
     nucleusTextInput = new UI_TextInputField(new Vector2(position.x+expanse.x*0.5,position.y+expanse.y*0.52), new Vector2(expanse.x*0.1, expanse.y*0.06),"",keyboard,true);
     codaTextInput = new UI_TextInputField(new Vector2(position.x+expanse.x*0.75,position.y+expanse.y*0.52), new Vector2(expanse.x*0.1, expanse.y*0.06),"",keyboard,true);
-    onsetPositionInput = new UI_IntegerField(new Vector2(position.x+expanse.x*0.2,position.y+expanse.y*0.6), new Vector2(expanse.x*0.24, expanse.y*0.05),"Onset",1,8,-8);
-    nucleusPositionInput = new UI_IntegerField(new Vector2(position.x+expanse.x*0.45,position.y+expanse.y*0.6), new Vector2(expanse.x*0.24, expanse.y*0.05),"Nucleus",1,8,-8);
-    codaPositionInput = new UI_IntegerField(new Vector2(position.x+expanse.x*0.7,position.y+expanse.y*0.6), new Vector2(expanse.x*0.24, expanse.y*0.05),"Coda",1,8,-8);
+    onsetPositionInput = new UI_IntegerField(new Vector2(position.x+expanse.x*0.2,position.y+expanse.y*0.6), new Vector2(expanse.x*0.24, expanse.y*0.05),"Onset",1,-8,8);
+    nucleusPositionInput = new UI_IntegerField(new Vector2(position.x+expanse.x*0.45,position.y+expanse.y*0.6), new Vector2(expanse.x*0.24, expanse.y*0.05),"Nucleus",1,-8,8);
+    codaPositionInput = new UI_IntegerField(new Vector2(position.x+expanse.x*0.7,position.y+expanse.y*0.6), new Vector2(expanse.x*0.24, expanse.y*0.05),"Coda",1,-8,8);
     onsetActiveCheckbox = new UI_Checkbox(new Vector2(position.x+expanse.x*0.22,position.y+expanse.y*0.67), new Vector2(expanse.x*0.15, expanse.y*0.04),"copy onset?",true);
     codaActiveCheckbox = new UI_Checkbox(new Vector2(position.x+expanse.x*0.72,position.y+expanse.y*0.67), new Vector2(expanse.x*0.15, expanse.y*0.04),"copy coda?",true);
     
-    syllablePositionInput = new UI_IntegerField(new Vector2(position.x+expanse.x*0.2,position.y+expanse.y*0.15),new Vector2(expanse.x*0.75,expanse.y*0.05)," Syllable Position:",1,8,-8);
-    duplicationStartInput = new UI_IntegerField(new Vector2(position.x+expanse.x*0.25,position.y+expanse.y*0.25),new Vector2(expanse.x*0.6,expanse.y*0.05)," Starting Syllable:",1,8,-8);
-    duplicationEndInput =   new UI_IntegerField(new Vector2(position.x+expanse.x*0.25,position.y+expanse.y*0.32),new Vector2(expanse.x*0.6,expanse.y*0.05)," Ending Syllable:",1,8,-8);
+    syllablePositionInput = new UI_IntegerField(new Vector2(position.x+expanse.x*0.2,position.y+expanse.y*0.15),new Vector2(expanse.x*0.75,expanse.y*0.05)," Syllable Position:",1,-8,8);
+    duplicationStartInput = new UI_IntegerField(new Vector2(position.x+expanse.x*0.25,position.y+expanse.y*0.25),new Vector2(expanse.x*0.6,expanse.y*0.05)," Starting Syllable:",1,-8,8);
+    duplicationEndInput =   new UI_IntegerField(new Vector2(position.x+expanse.x*0.25,position.y+expanse.y*0.32),new Vector2(expanse.x*0.6,expanse.y*0.05)," Ending Syllable:",1,-8,8);
     duplicateWithCodaCheckbox =  new UI_Checkbox(new Vector2(position.x+expanse.x*0.35,position.y+expanse.y*0.45),new Vector2(expanse.x*0.4,expanse.y*0.05),"keep First Coda?",true);
     duplicateWithOnsetCheckbox = new UI_Checkbox(new Vector2(position.x+expanse.x*0.35,position.y+expanse.y*0.52),new Vector2(expanse.x*0.4,expanse.y*0.05),"keep Last Onset?",true);
     duplicatePositionCheckbox = new UI_Checkbox(new Vector2(position.x+expanse.x*0.3,position.y+expanse.y*0.62),new Vector2(expanse.x*0.5,expanse.y*0.05),"copy to preposition?",true);
@@ -606,6 +606,60 @@ public class UI_QuantifierEditor extends UIObject{
     
     int c;
     ///MISSING STUFF
+    wordTypeSelection.selected = wm.nameId;
+    SyllableModifier[] tmp = wm.modifiers;
+    if(tmp.length == 0){
+      modificationSelection.selected = -1;
+      
+      previewText.text = "";
+      onsetFixedCheckbox.state = true; nucleusFixedCheckbox.state = true; codaFixedCheckbox.state = true;
+      onsetTextInput.text = "";  nucleusTextInput.text = "";  codaTextInput.text = "";
+      onsetPositionInput.value = 0;  nucleusPositionInput.value = 0;  codaPositionInput.value = 0;
+      onsetActiveCheckbox.state = true;  codaActiveCheckbox.state = true;
+      syllablePositionInput.value = 0; duplicationStartInput.value = 0; duplicationEndInput.value = 0;
+      duplicateWithCodaCheckbox.state = true;  duplicateWithOnsetCheckbox.state = true;   duplicatePositionCheckbox.state = true;
+      
+    }else if(tmp.length == 1){
+      modificationSelection.selected = tmp[0].preSyllable?0: tmp[0].postSyllable?1: tmp[0].inSyllable?2: 4;
+      
+      previewText.text = tmp[0].toString();
+      onsetFixedCheckbox.state = tmp[0].onsetFixed; nucleusFixedCheckbox.state = tmp[0].nucleusFixed; codaFixedCheckbox.state = tmp[0].codaFixed;
+      onsetTextInput.text = tmp[0].onsetSound;  nucleusTextInput.text = tmp[0].nucleusSound;  codaTextInput.text = tmp[0].codaSound;
+      onsetPositionInput.value = tmp[0].onsetReferencePosition;  nucleusPositionInput.value = tmp[0].nucleusReferencePosition;  codaPositionInput.value = tmp[0].codaReferencePosition;
+      onsetActiveCheckbox.state = tmp[0].onsetCopyOnset;  codaActiveCheckbox.state = tmp[0].codaCopyCoda;
+      syllablePositionInput.value = tmp[0].syllablePosition; duplicationStartInput.value = 0; duplicationEndInput.value = 0;
+      duplicateWithCodaCheckbox.state = true;  duplicateWithOnsetCheckbox.state = true;   duplicatePositionCheckbox.state = true;
+     
+    }else{
+      modificationSelection.selected = 3;
+      
+      previewText.text = "";
+      onsetFixedCheckbox.state = true; nucleusFixedCheckbox.state = true; codaFixedCheckbox.state = true;
+      onsetTextInput.text = "";  nucleusTextInput.text = "";  codaTextInput.text = "";
+      onsetPositionInput.value = 0;  nucleusPositionInput.value = 0;  codaPositionInput.value = 0;
+      onsetActiveCheckbox.state = true;  codaActiveCheckbox.state = true;
+      syllablePositionInput.value = 0;
+      
+      if(tmp[0].codaFixed){//Coda replacement
+        duplicateWithCodaCheckbox.state = false;
+        duplicationStartInput.value = tmp[1].onsetReferencePosition;
+        duplicatePositionCheckbox.state = tmp[1].preSyllable;
+        
+      }else{//No changes to coda
+        duplicateWithCodaCheckbox.state = true;
+        duplicationStartInput.value = tmp[0].onsetReferencePosition;
+        duplicatePositionCheckbox.state = tmp[0].preSyllable;
+      }
+      
+      if(tmp[ tmp.length-1 ].onsetFixed){//Onset replacement
+        duplicateWithOnsetCheckbox.state = false;
+        duplicationEndInput.value = tmp[ tmp.length-2 ].onsetReferencePosition;
+        
+      }else{//No changes to onset
+        duplicateWithOnsetCheckbox.state = true;
+        duplicationEndInput.value = tmp[ tmp.length-1 ].onsetReferencePosition;
+      }
+    }
   }
   
   public void draw(){
@@ -619,7 +673,6 @@ public class UI_QuantifierEditor extends UIObject{
         if(activeLayer != null) { activeLayer.draw(); }
       //}
       
-      //keyboard
     }
   }
   
@@ -676,6 +729,10 @@ public class UI_QuantifierEditor extends UIObject{
         }
         uiRefreshed = true;
       }
+      
+      if(onsetFixedCheckbox.getTrigger() || onsetFixedCheckbox.getTrigger() || onsetFixedCheckbox.getTrigger()){
+        
+      }
     }
   }
   
@@ -684,8 +741,6 @@ public class UI_QuantifierEditor extends UIObject{
   }
   
   public void applyChanges(){
-    activeQuantifier.name = QuantifierType.toString(wordTypeSelection.selected);
-    activeQuantifier.nameId = wordTypeSelection.selected;
     
     SyllableModifier[] tmp = new SyllableModifier[0];
     if(modificationSelection.selected == 0){ //Pre Syllable
@@ -778,12 +833,12 @@ public class UI_QuantifierEditor extends UIObject{
         }
         
         if(duplicateWithOnsetCheckbox.state && duplicateWithCodaCheckbox.state){
-          tmp[ tmp.length-2 ] = new SyllableModifier(0, duplicationStartInput.value, duplicationStartInput.value, true, duplicationStartInput.value, "");
-          tmp[ tmp.length-1 ] = new SyllableModifier(0, duplicationEndInput.value, "", duplicationEndInput.value, duplicationEndInput.value, true);
+          tmp[ tmp.length-2 ] = new SyllableModifier(0, duplicationStartInput.value-1, duplicationStartInput.value-1, true, duplicationStartInput.value-1, "");
+          tmp[ tmp.length-1 ] = new SyllableModifier(0, duplicationEndInput.value+1, "", duplicationEndInput.value+1, duplicationEndInput.value+1, true);
         }else if(duplicateWithCodaCheckbox.state){
-          tmp[ tmp.length-1 ] = new SyllableModifier(0, duplicationStartInput.value, duplicationStartInput.value, true, duplicationStartInput.value, "");
+          tmp[ tmp.length-1 ] = new SyllableModifier(0, duplicationStartInput.value-1, duplicationStartInput.value-1, true, duplicationStartInput.value-1, "");
         }else if(duplicateWithOnsetCheckbox.state){
-          tmp[ tmp.length-1 ] = new SyllableModifier(0, duplicationEndInput.value, "", duplicationEndInput.value, duplicationEndInput.value, true);
+          tmp[ tmp.length-1 ] = new SyllableModifier(0, duplicationEndInput.value+1, "", duplicationEndInput.value+1, duplicationEndInput.value+1, true);
         }
       }
       //////////////////////////////////////////////////
@@ -846,6 +901,9 @@ public class UI_QuantifierEditor extends UIObject{
     
     }
     activeQuantifier.modifiers = tmp;
+    
+    activeQuantifier.name = QuantifierType.toString(wordTypeSelection.selected);
+    activeQuantifier.nameId = wordTypeSelection.selected;
   }
   
   public boolean getTrigger(){
