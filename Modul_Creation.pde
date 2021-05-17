@@ -84,6 +84,13 @@ public class CreationScene extends Scene{
     public UI_VocabularyList quantifierReferenceVocabularyList;
     public UI_InputKeyboard layer2c_keyboard;
   public UI_Layer layer2d_tenses;
+    public UI_TenseList tenseList;
+    public UI_Button addTenseButton;
+    public UI_TenseEditor tenseEditor;
+    public UI_Text tenseInstructionsText;
+    public UI_Button confirmTensesButton;
+    public UI_VocabularyList tenseReferenceVocabularyList;
+    public UI_InputKeyboard layer2d_keyboard;
   public UI_Layer layer2e_valency;
   public UI_Layer layer2f_testing;
   
@@ -251,8 +258,21 @@ public class CreationScene extends Scene{
         layer2c_quantifiers.addObject(quantifierReferenceVocabularyList);
       
       layer2d_tenses = new UI_Layer( "2d: Tenses" );
+        layer2d_keyboard = new UI_InputKeyboard(new Vector2(15,715),new Vector2(1000,170),resultPhonologyConsonantTable,resultPhonologyVowelTable);
+        tenseList = new UI_TenseList(new Vector2(20,75),new Vector2(300,600));
+        addTenseButton = new UI_Button(new Vector2(70,680),new Vector2(200,25), " Add Tense", true);
+        tenseEditor = new UI_TenseEditor(new Vector2(350,75),new Vector2(760,630), layer2c_keyboard);
+        tenseEditor.listReference = tenseList;
+        tenseInstructionsText = new UI_Text(new Vector2(15,715),new Vector2(1000,170)," Instructions not added yet\n\n\n\n\n");
+        confirmTensesButton = new UI_Button(new Vector2(1050,740),new Vector2(300,30), " Confirm Tenses", true);
+        tenseReferenceVocabularyList = new  UI_VocabularyList(new Vector2(1130,75),new Vector2(250,630), layer2c_keyboard);
         
-        layer2d_tenses.addObject(missingHighPriority);
+        layer2d_tenses.addObject(tenseList);
+        layer2d_tenses.addObject(tenseInstructionsText);
+        layer2d_tenses.addObject(addTenseButton);
+        layer2d_tenses.addObject(tenseEditor);
+        layer2d_tenses.addObject(confirmTensesButton);
+        layer2d_tenses.addObject(tenseReferenceVocabularyList);
       
       layer2e_valency = new UI_Layer( "2e: Valency" );
         
