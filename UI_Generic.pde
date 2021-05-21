@@ -112,6 +112,8 @@ public class UI_LayerSwitch extends UIObject{
   public Vector2 position;
   public Vector2 expanse;
   
+  public float tabSize = 130f;
+  
   public UI_LayerSwitch(Vector2 pos, Vector2 exp){ 
     position = pos;
     expanse = exp;
@@ -125,7 +127,7 @@ public class UI_LayerSwitch extends UIObject{
   public void draw(){
     int old = hovering;
     if(mouseY > position.y && mouseY < position.y+25 && mouseX > position.x){
-      hovering = int((mouseX - position.x) / 120f);
+      hovering = int((mouseX - position.x) / tabSize);
       if(hovering >= layers.size()){ hovering = -1; }
     }else{
       hovering = -1;
@@ -148,18 +150,18 @@ public class UI_LayerSwitch extends UIObject{
         }else{
           fill(ColorCode.guiLayer);
         }
-        rect(position.x+120*i,position.y,120,25);
+        rect(position.x+tabSize*i,position.y,tabSize,25);
       }else{
         if(i == hovering) { 
           fill(ColorCode.guiLayerHovered);
         }else{
           fill(ColorCode.guiLayerInactive);
         }
-        rect(position.x+120*i+2,position.y+2,120-4,25-2);
+        rect(position.x+tabSize*i+2,position.y+2,tabSize-4,25-2);
       }
       fill(ColorCode.black);
       textSize(13);
-      text(layers.get(i).name,position.x+120*i+2,position.y+4,120-3,25-2);
+      text(layers.get(i).name,position.x+tabSize*i+2,position.y+4,tabSize-3,25-2);
     }
     
     //Render Layer

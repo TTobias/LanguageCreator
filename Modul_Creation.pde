@@ -18,6 +18,7 @@ public class CreationScene extends Scene{
     public UI_TextInputField dataFileNameInput;
     public UI_Button saveDataButton; 
     public UI_Button loadDataButton; 
+    public UI_Text mainInstructions;
   
   //Layer1 - PHONOLOGY
   public UI_Layer layer1_phonology;
@@ -29,13 +30,11 @@ public class CreationScene extends Scene{
     public UI_Button bakePhoneticInventoryButton;
     public UI_Text phoneticInventoryInstructionText;
   public UI_Layer layer1b_examples;
-    ///////////////////////////
   public UI_Layer layer1c_phonotactics;
     public UI_SyllableShapeEditor syllableShapeEditor;
     public UI_Button bakeSyllableShapeButton;
     public UI_Text syllableShapeInstructionText;
   public UI_Layer layer1d_exceptions;
-    ///////////////////////////
   public UI_Layer layer1e_stressing;
     public UI_IntegerField primaryStressingPositionField;
     public UI_Text syllableStressingInstructionText;
@@ -92,10 +91,26 @@ public class CreationScene extends Scene{
     public UI_VocabularyList tenseReferenceVocabularyList;
     public UI_InputKeyboard layer2d_keyboard;
   public UI_Layer layer2e_valency;
-  public UI_Layer layer2f_testing;
+  public UI_Layer layer2f_conjunctions;
+  public UI_Layer layer2g_testing;
   
-  //Layer3 - DUMMY
-  public UI_Layer layer3_;
+  //Layer3 - VOCABULARY
+  public UI_Layer layer3_vocabulary;
+  public UI_LayerSwitch layer3Switch;
+    //Stuff goes here
+  
+  public UI_Layer layer3a_creating;
+  public UI_Layer layer3b_compounds;
+  public UI_Layer layer3c_incorporation;
+  public UI_Layer layer3d_interchange;
+  public UI_Layer layer3e_nominalization;
+  public UI_Layer layer3f_idioms;
+  
+  //Layer4 - EVOLUTION
+  public UI_Layer layer4_evolution;
+  
+  //Layer5 - DUMMY
+  public UI_Layer layer5_;
   
   public void constructGui(){
     
@@ -109,11 +124,13 @@ public class CreationScene extends Scene{
       dataFileNameInput = new UI_TextInputField( new Vector2( 30, 75), new Vector2(300,35), "temp",false);
       saveDataButton = new UI_Button(new Vector2( 80, 120), new Vector2(200,30), " Save to File",true); 
       loadDataButton = new UI_Button(new Vector2( 80, 155), new Vector2(200,30), " Load from File",true); 
+      mainInstructions = new UI_Text( new Vector2( 50, 300), new Vector2(600,300), " Main Instructions not added yet\n\n\n\n\n\n\n\n\n");
         
       layer0_data.addObject(dataFileText);
       layer0_data.addObject(dataFileNameInput);
       layer0_data.addObject(saveDataButton);
       layer0_data.addObject(loadDataButton);
+      layer0_data.addObject(mainInstructions);
     
     //////////////////////////////////////////////////////////
     layer1_phonology = new UI_Layer( "1: Phonology" );
@@ -224,8 +241,8 @@ public class CreationScene extends Scene{
           apnWordOrderSwitch.addButton( new UI_Button(new Vector2(550,350), new Vector2(220,30),"    N A P", true) );
           apnWordOrderSwitch.addButton( new UI_Button(new Vector2(550,400), new Vector2(220,30),"    N P A", true) );
         possessorOrderSwitch           = new UI_SwitchcaseButton( new Vector2(915,100), new Vector2(300,175) );
-          possessorOrderSwitch.addButton( new UI_Button(new Vector2(950,150), new Vector2(220,30)," Possessor Possesse", true) );
-          possessorOrderSwitch.addButton( new UI_Button(new Vector2(950,200), new Vector2(220,30)," Possesse Possessor", true) );
+          possessorOrderSwitch.addButton( new UI_Button(new Vector2(950,150), new Vector2(220,30)," Possessor Possessee", true) );
+          possessorOrderSwitch.addButton( new UI_Button(new Vector2(950,200), new Vector2(220,30)," Possessee Possessor", true) );
         wordOrderPreviewText     = new UI_Text( new Vector2(25,520), new Vector2(width -50,50)," PREVIEW" );;
         wordOrderInstructionText = new UI_Text( new Vector2(35,600), new Vector2(800,250)," Instructions not added yet\n\n\n\n\n\n\n\n\n" );;
         confirmWordOrderButton = new UI_Button( new Vector2(900,700),new Vector2(300,40)," Confirm Word Order",true );;
@@ -246,7 +263,7 @@ public class CreationScene extends Scene{
         addQuantifierButton = new UI_Button(new Vector2(70,680),new Vector2(200,25), " Add Quantifier", true);
         quantifierEditor = new UI_QuantifierEditor(new Vector2(350,75),new Vector2(760,630), layer2c_keyboard);
         quantifierEditor.listReference = quantifierList;
-        quantifierInstructionsText = new UI_Text(new Vector2(15,715),new Vector2(1000,170)," Instructions not added yet\n\n\n\n\n");
+        quantifierInstructionsText = new UI_Text(new Vector2(15,715),new Vector2(1000,170)," Instructions not added yet\nAuxiliary Word not added yet\n\n\n\n");
         confirmQuantifierButton = new UI_Button(new Vector2(1050,740),new Vector2(300,30), " Confirm Quantifiers", true);
         quantifierReferenceVocabularyList = new  UI_VocabularyList(new Vector2(1130,75),new Vector2(250,630), layer2c_keyboard);
         
@@ -263,7 +280,7 @@ public class CreationScene extends Scene{
         addTenseButton = new UI_Button(new Vector2(70,680),new Vector2(200,25), " Add Tense", true);
         tenseEditor = new UI_TenseEditor(new Vector2(350,75),new Vector2(760,630), layer2c_keyboard);
         tenseEditor.listReference = tenseList;
-        tenseInstructionsText = new UI_Text(new Vector2(15,715),new Vector2(1000,170)," Instructions not added yet\n\n\n\n\n");
+        tenseInstructionsText = new UI_Text(new Vector2(15,715),new Vector2(1000,170)," Instructions not added yet\nAuxiliary Word not added yet\n\n\n\n");
         confirmTensesButton = new UI_Button(new Vector2(1050,740),new Vector2(300,30), " Confirm Tenses", true);
         tenseReferenceVocabularyList = new  UI_VocabularyList(new Vector2(1130,75),new Vector2(250,630), layer2c_keyboard);
         
@@ -278,9 +295,13 @@ public class CreationScene extends Scene{
         
         layer2e_valency.addObject(missingMediumPriority);
       
-      layer2f_testing = new UI_Layer( "2f: Testing" );
+      layer2f_conjunctions = new UI_Layer( "2f: Conjunctions" );
         
-        layer2f_testing.addObject(missingLowPriority);
+        layer2f_conjunctions.addObject(missingHighPriority);
+      
+      layer2g_testing = new UI_Layer( "2g: Testing" );
+        
+        layer2g_testing.addObject(missingLowPriority);
     
       layer2Switch = new UI_LayerSwitch(new Vector2(10,40),new Vector2(width-20,height-50));
       layer2Switch.addLayer(layer2a_rootWords);
@@ -288,20 +309,68 @@ public class CreationScene extends Scene{
       layer2Switch.addLayer(layer2c_quantifiers);
       layer2Switch.addLayer(layer2d_tenses);
       layer2Switch.addLayer(layer2e_valency);
-      layer2Switch.addLayer(layer2f_testing);
+      layer2Switch.addLayer(layer2f_conjunctions);
+      layer2Switch.addLayer(layer2g_testing);
       layer2_protolanguage.addObject(layer2Switch);
     
+    
     //////////////////////////////////////////////////////////
-    layer3_ = new UI_Layer( "3: Dummy" );
+    layer3_vocabulary = new UI_Layer( "3: Vocabulary" );
+    
+      layer3a_creating = new UI_Layer( "3a: Creating" );
         
-        layer3_.addObject(missingMediumPriority);
+        layer3a_creating.addObject(missingHighPriority);
+    
+      layer3b_compounds = new UI_Layer( "3b: Compounds" );
+        
+        layer3b_compounds.addObject(missingHighPriority);
+    
+      layer3c_incorporation = new UI_Layer( "3c: Incorporation" );
+        
+        layer3c_incorporation.addObject(missingMediumPriority);
+    
+      layer3d_interchange = new UI_Layer( "3d: Interchange" );
+        
+        layer3d_interchange.addObject(missingMediumPriority);
+    
+      layer3e_nominalization = new UI_Layer( "3e: Nominalization" );
+        
+        layer3e_nominalization.addObject(missingMediumPriority);
+    
+      layer3f_idioms = new UI_Layer( "3f: Idioms" );
+        
+        layer3f_idioms.addObject(missingLowPriority);
+        
+    
+      layer3Switch = new UI_LayerSwitch(new Vector2(580,40),new Vector2(width-590,height-50));
+      layer3Switch.addLayer(layer3a_creating);
+      layer3Switch.addLayer(layer3b_compounds);
+      layer3Switch.addLayer(layer3c_incorporation);
+      layer3Switch.addLayer(layer3d_interchange);
+      layer3Switch.addLayer(layer3e_nominalization);
+      layer3Switch.addLayer(layer3f_idioms);
+      layer3_vocabulary.addObject(layer3Switch);
+    
+    
+    //////////////////////////////////////////////////////////
+    layer4_evolution = new UI_Layer( "4: Evolution" );
+        
+        layer4_evolution.addObject(missingMediumPriority);
+    
+    
+    //////////////////////////////////////////////////////////
+    layer5_ = new UI_Layer( "5: Dummy" );
+        
+        layer5_.addObject(missingLowPriority);
     
     
     mainLayerSwitch = new UI_LayerSwitch(new Vector2(5,5),new Vector2(width-10,height-10));
     mainLayerSwitch.addLayer(layer0_data);
     mainLayerSwitch.addLayer(layer1_phonology);
     mainLayerSwitch.addLayer(layer2_protolanguage);
-    mainLayerSwitch.addLayer(layer3_);
+    mainLayerSwitch.addLayer(layer3_vocabulary);
+    mainLayerSwitch.addLayer(layer4_evolution);
+    mainLayerSwitch.addLayer(layer5_);
     addUiElement(mainLayerSwitch);
     
     backButton = new UI_Button( new Vector2(width-215,height-45),new Vector2(200,30),"Back to Menu",true );
@@ -387,10 +456,11 @@ public class CreationScene extends Scene{
     if(possessorOrderSwitch.getTrigger()){
       println("Updated Word Order");
       recalculateWordOrderText();
-    }/*
+    }
     if(confirmWordOrderButton.getTrigger()){
       println("Comfirmed Word Order");
-    }*/
+      applyWordOrder();
+    }
     
     if(addQuantifierButton.getTrigger()){
       println("Added new Quantifier");
@@ -401,6 +471,25 @@ public class CreationScene extends Scene{
     if(quantifierList.getTrigger()){
       println("Quantifier List Object Selected");
       quantifierEditor.setQuantifier(quantifierList.selection);
+    }
+    if(confirmQuantifierButton.getTrigger()){
+      println("Applying Quantifiers");
+      languageData.quantifiers = quantifierList.getCopy();
+    }
+    
+    if(addTenseButton.getTrigger()){
+      println("Added new Tense");
+      WordModifier tmp = new WordModifier(new SyllableModifier[0], "");
+      tenseList.list.add(tmp);
+      tenseEditor.setTense(tmp);
+    }
+    if(tenseList.getTrigger()){
+      println("Quantifier List Object Selected");
+      tenseEditor.setTense(tenseList.selection);
+    }
+    if(confirmTensesButton.getTrigger()){
+      println("Applying Tenses");
+      languageData.tenses = tenseList.getCopy();
     }
   }
   
@@ -453,6 +542,12 @@ public class CreationScene extends Scene{
     
     
     updateKeyboards();
+  }
+  
+  
+  public void applyWordOrder(){
+    int i;
+    //NOT IMPLEMENTED YET
   }
   
   
@@ -529,6 +624,7 @@ public class CreationScene extends Scene{
   public void updateVocabularyLists(){
       rootWordVocabularyList.reloadWords();
       quantifierReferenceVocabularyList.reloadWords();
+      tenseReferenceVocabularyList.reloadWords();
   }
   
   
@@ -540,6 +636,10 @@ public class CreationScene extends Scene{
     layer2c_keyboard.soundBtn = new ArrayList<UI_Button>(); 
     layer2c_keyboard.importSounds(languageData.consonants);
     layer2c_keyboard.importSounds(languageData.vowels);
+    
+    layer2d_keyboard.soundBtn = new ArrayList<UI_Button>(); 
+    layer2d_keyboard.importSounds(languageData.consonants);
+    layer2d_keyboard.importSounds(languageData.vowels);
   }
   
   
@@ -565,7 +665,9 @@ public class CreationScene extends Scene{
     
     //rootWordMultiText;
     //rootWordEditor;
-    //layer2a_keyboard;
+    
+    quantifierList.reload();
+    tenseList.reload();
     
   }
 }

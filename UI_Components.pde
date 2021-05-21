@@ -351,7 +351,7 @@ public class UI_QuantifierList extends UIObject{
     list = new ArrayList<WordModifier>();
     
     //Words are loaded from the languageData Word List
-    for(int i = 0; i<languageData.wordlist.size(); i++){
+    for(int i = 0; i<languageData.quantifiers.size(); i++){
       WordModifier tmp = languageData.quantifiers.get(i);
       list.add(tmp);
     }
@@ -459,6 +459,14 @@ public class UI_QuantifierList extends UIObject{
         uiRefreshed = true;
       }
     }
+  }
+  
+  public ArrayList<WordModifier> getCopy(){
+    ArrayList<WordModifier> tmp = new ArrayList<WordModifier>();
+    for(int i = 0; i<list.size(); i++){
+      tmp.add( list.get(i) );
+    }
+    return tmp;
   }
   
   public boolean getTrigger(){
@@ -698,7 +706,7 @@ public class UI_QuantifierEditor extends UIObject{
       modificationSelection.onMouseDown();
       deleteButton.onMouseDown();
       applyButton.onMouseDown();
-        
+      
       if(activeLayer != null) { activeLayer.onMouseDown(); }
       
       //BUTTON FUNCTIONS
@@ -772,7 +780,7 @@ public class UI_QuantifierEditor extends UIObject{
         
       else if(onsetFixedCheckbox.state && nucleusFixedCheckbox.state && !codaFixedCheckbox.state) //ONC
         tmp[0] = new SyllableModifier(1, 0, onsetPositionInput.value, onsetActiveCheckbox.state, nucleusPositionInput.value, codaPositionInput.value, codaActiveCheckbox.state);
-        
+    
         
     }else if(modificationSelection.selected == 1){ //Post Syllable
       tmp = new SyllableModifier[1];
@@ -904,6 +912,9 @@ public class UI_QuantifierEditor extends UIObject{
         tmp[0] = new SyllableModifier(0, syllablePositionInput.value, onsetPositionInput.value, onsetActiveCheckbox.state, nucleusPositionInput.value, codaPositionInput.value, codaActiveCheckbox.state);
     
     }
+    if(tmp[0] == null){
+      tmp = new SyllableModifier[0];
+    }
     activeQuantifier.modifiers = tmp;
     
     activeQuantifier.name = QuantifierType.toString(wordTypeSelection.selected);
@@ -951,8 +962,8 @@ public class UI_TenseList extends UIObject{
     list = new ArrayList<WordModifier>();
     
     //Words are loaded from the languageData Word List
-    for(int i = 0; i<languageData.wordlist.size(); i++){
-      WordModifier tmp = languageData.quantifiers.get(i);
+    for(int i = 0; i<languageData.tenses.size(); i++){
+      WordModifier tmp = languageData.tenses.get(i);
       list.add(tmp);
     }
     
@@ -1061,6 +1072,14 @@ public class UI_TenseList extends UIObject{
     }
   }
   
+  public ArrayList<WordModifier> getCopy(){
+    ArrayList<WordModifier> tmp = new ArrayList<WordModifier>();
+    for(int i = 0; i<list.size(); i++){
+      tmp.add( list.get(i) );
+    }
+    return tmp;
+  }
+  
   public boolean getTrigger(){
     if(changed){
       changed = false;
@@ -1123,8 +1142,8 @@ public class UI_TenseEditor extends UIObject{
     keyboard = k;
     
     wordTypeSelection = new UI_SwitchcaseButton(new Vector2(position.x+3,position.y+3), new Vector2(expanse.x*0.15, expanse.y-6));
-    for(int i = 0; i<QuantifierType.getAmount(); i++){
-      wordTypeSelection.addButton( new UI_Button(new Vector2(position.x+8,position.y+8+expanse.y*0.05*i), new Vector2(expanse.x*0.15-16,expanse.y*0.045), QuantifierType.toString(i) ,true) );
+    for(int i = 0; i<TenseType.getAmount(); i++){
+      wordTypeSelection.addButton( new UI_Button(new Vector2(position.x+8,position.y+8+expanse.y*0.043*i), new Vector2(expanse.x*0.15-16,expanse.y*0.04), TenseType.toString(i) ,true) );
     }
     
     modificationSelection = new UI_SwitchcaseButton(new Vector2(position.x+10+expanse.x*0.15,position.y+5), new Vector2(expanse.x*0.82, expanse.y*0.12));
@@ -1201,10 +1220,9 @@ public class UI_TenseEditor extends UIObject{
     syllableModification.addObject(onsetActiveCheckbox); syllableModification.addObject(codaActiveCheckbox);
   }
   
-  public void setQuantifier(WordModifier wm){
+  public void setTense(WordModifier wm){
     activeTense = wm;
     
-    int c;
     ///MISSING STUFF
     wordTypeSelection.selected = wm.nameId;
     SyllableModifier[] tmp = wm.modifiers;
@@ -1500,6 +1518,10 @@ public class UI_TenseEditor extends UIObject{
         tmp[0] = new SyllableModifier(0, syllablePositionInput.value, onsetPositionInput.value, onsetActiveCheckbox.state, nucleusPositionInput.value, codaPositionInput.value, codaActiveCheckbox.state);
     
     }
+    if(tmp[0] == null){
+      tmp = new SyllableModifier[0];
+    }
+    
     activeTense.modifiers = tmp;
     
     activeTense.name = QuantifierType.toString(wordTypeSelection.selected);

@@ -1,4 +1,4 @@
-15
+13
 teskosu : person : 0
 nbotsi : home : 0
 osi : i : 3
@@ -12,5 +12,3 @@ esup : you : 3
 set : they : 3
 tobfnis : small : 2
 nasfi : rain : 0
-npo : do : 1
-okni : it : 3

@@ -167,10 +167,17 @@ public class LanguageData{
   //WORDS
   public ArrayList<WordTranslation> wordlist = new ArrayList<WordTranslation>();
   
-  //BASE GRAMMAR
+  //WORD ORDER
+  //Needs some changes later
+  public int i;
     
   //QUANTIFIERS
+  //public ArrayList<Quantifier> quantifiers = new ArrayList<Quantifier>();
   public ArrayList<WordModifier> quantifiers = new ArrayList<WordModifier>();
+  
+  //TENSES
+  //public ArrayList<Tense> tenses = new ArrayList<Tense>();
+  public ArrayList<WordModifier> tenses = new ArrayList<WordModifier>();
   
   //EXTERN
   public String[][] simplifiedSounds;
@@ -383,9 +390,24 @@ public class LanguageData{
       wordlist.add(new WordTranslation(split(lodWords[i]," : ")[0],split(lodWords[i]," : ")[1],int(split(lodWords[i]," : ")[2])) );
     }
     
-    //BASE GRAMMAR
+    //WORD ORDER
+    
     
     //QUANTIFIERS
+    println( "load quantifiers");
+    String[] lodQuantifiers = loadStrings(filepath+projectpath+"/quantifierList.txt");
+    quantifiers = new ArrayList<WordModifier>();
+    for(int i = 1; i< 1+int(lodQuantifiers[0]); i++){
+      quantifiers.add( new WordModifier(lodQuantifiers[i]) );
+    }
+    
+    //TENSES
+    println( "load tenses");
+    String[] lodTenses = loadStrings(filepath+projectpath+"/tenseList.txt");
+    tenses = new ArrayList<WordModifier>();
+    for(int i = 1; i< 1+int(lodTenses[0]); i++){
+      tenses.add( new WordModifier(lodTenses[i]) );
+    }
     
     
   }
@@ -439,7 +461,25 @@ public class LanguageData{
     }
     saveStrings(filepath+projectpath+"/wordlist.txt",savWords);
     
-    //GRAMMAR
+    //WORD ORDER
+    
+    
+    //QUANTIFIERS
+    String[] savQuantifiers = new String[quantifiers.size()+1];
+    savQuantifiers[0] = ""+quantifiers.size();
+    for(int i = 0; i<quantifiers.size(); i++){
+      savQuantifiers[1+i] = quantifiers.get(i).saveModifier();
+    }
+    saveStrings(filepath+projectpath+"/quantifierList.txt",savQuantifiers);
+    
+    //TENSES
+    String[] savTenses = new String[tenses.size()+1];
+    savTenses[0] = ""+tenses.size();
+    for(int i = 0; i<tenses.size(); i++){
+      savTenses[1+i] = tenses.get(i).saveModifier();
+    }
+    saveStrings(filepath+projectpath+"/tenseList.txt",savTenses);
+    
     
     
   }
@@ -451,6 +491,7 @@ public static class WordType{
   public static int VERB = 1;
   public static int ADJECTIVE = 2;
   public static int PERSPRONOUN = 3;
+  public static int CONJUNCTION = 3;
   
   public static int OTHER = -1;
   
@@ -461,6 +502,7 @@ public static class WordType{
       case(1):return "Verb";
       case(2):return "Adjective";
       case(3):return "Pers. Pronoun";
+      case(4):return "Conjunction";
     }
   }
 }
@@ -493,11 +535,19 @@ public class WordTranslation{
 
 
 
+void UNUSED_QUANTIFIER(int i){}
+//Will be needed for adding auxiliary Words
+/*
 public class Quantifier{
+  public int type = -1;
+  public WordModifier modifier;
+}
+
+public class Tense{
   public int type = -1;
   
 }
-
+*/
 
 public static class QuantifierType{
   public static int SINGULAR = 0;
@@ -564,7 +614,274 @@ public static class QuantifierType{
   }
   
   public static int getAmount(){
-    return QUARTER; //NEEDS TO BE UPDATED WHEN ADDING NEW QUANTIFIERS
+    return 15; //NEEDS TO BE UPDATED WHEN ADDING NEW QUANTIFIERS
+  }
+}
+
+public static class TenseType{
+  public static int PRESENT = 0;
+  public static int PAST = 1;
+  public static int FUTURE = 2;
+  public static int PASTPROGRESSIV = 3;
+  public static int PERFERCT = 4;
+  public static int IMPERFECT = 5;
+  public static int FUTUREPROGRESSIVE = 6;
+  public static int NEARFUTURE = 7;
+  public static int FARFUTURE = 8;
+  public static int FUTUREINPAST = 9;
+  public static int PASTINFUTURE = 10;
+  public static int DISTANTPAST = 11;
+  public static int CLOSEPAST = 12;
+  public static int GENERALISATION = 13;
+  public static int HYPOTHETICAL = 14;
+  public static int QUESTION = 15; //Not sure what to do with this
+  public static int RELATIVEFUTURE = 16;
+  public static int RELATIVEPAST = 17;
+  public static int NECESSITY = 18;
+  public static int CONDITIONAL = 19;
+  public static int CONDITIONALPAST = 20;
+  public static int CONDITIONALFUTURE = 21;
+  public static int PLUSPERFECT = 22;
+  //public static int PASSIVE = 18; rn in valency, can be applied to any tense in theory
+  //public static int ACTIVE = 18;
+  
+  public static int OTHER = -1;
+  
+  public static String toString(int i){
+    switch(i){
+      default:return "Other";
+      case( 0):return "Present";
+      case( 1):return "Past";
+      case( 2):return "Future";
+      case( 3):return "Past Progressive";
+      case( 4):return "Perfect";
+      case( 5):return "Imperfect";
+      case( 6):return "Future Progressive";
+      case( 7):return "Near Future";
+      case( 8):return "Far Future";
+      case( 9):return "Future in the Past";
+      case(10):return "Past in the Future";
+      case(11):return "Distant Past";
+      case(12):return "Close Past";
+      case(13):return "Generalisation";
+      case(14):return "Hypothetical";
+      case(15):return "Question";
+      case(16):return "Relative Future";
+      case(17):return "Relative Past";
+      case(18):return "Necessity";
+      case(19):return "Conditional";
+      case(20):return "Conditional Past";
+      case(21):return "Conditional Future";
+      case(22):return "Plus-Perfect";
+    }
+  }
+  
+  public static String description(int i){
+    switch(i){
+      default:return "-";
+      case( 0):return "Action in the present";
+      case( 1):return "Action in the past";
+      case( 2):return "Action in the future";
+      case( 3):return "Continuing action in the past";
+      case( 4):return "Action that was completed in the past";
+      case( 5):return "Action that happened for an undefined time in the past";
+      case( 6):return "Continuing Action in the future";
+      case( 7):return "Action in the near future";
+      case( 8):return "Action in the far future";
+      case( 9):return "Action that happens in the future from a past perspective";
+      case(10):return "Action that already happened from a future perspective";
+      case(11):return "Action in the distant past";
+      case(12):return "Action in the near past";
+      case(13):return "Action portrayed as a general truth or very usual";
+      case(14):return "Hypothetical action that might occur";
+      case(15):return "Questioning an action in a statement";
+      case(16):return "Action that happens in the future from a time perspective in the context";
+      case(17):return "Action that happened in the past from a time perspective in the context";
+      case(18):return "Action that is or is seen as necessary";
+      case(19):return "Action that is bound to a condition in the context";
+      case(20):return "Past Action that was bound to a condition in the context";
+      case(21):return "Future Action that is bound to a condition in the context";
+      case(22):return "Action that happened before the past";
+    }
+  }
+  
+  public static int getAmount(){
+    return 22; //NEEDS TO BE UPDATED WHEN ADDING NEW QUANTIFIERS
+  }
+}
+
+
+
+public static class ConjunctionTypes{
+  public static int ADDITIVE = 0;
+  public static int DISJUNCTIVE = 1;
+  public static int NEGATIVE = 2;
+  public static int CONTRAJUNCTIVE = 3;
+  public static int NONJUNCTIVE = 4;
+  public static int CONTINUITIVE = 5;
+  public static int NONADDITIVE = 6;
+  public static int ADVERSATIVE = 7;
+  public static int OPPOSITIVE = 8;
+  public static int IMPLICATIVE = 9;
+  public static int CONDITIVE = 10;
+  public static int BICONDITIVE = 11;
+  public static int EXTENSIVE = 12;
+  public static int SUBTRACTIVE = 13;
+  public static int COMPERATIVE = 14;
+  public static int CONZESSIVE = 15;
+  public static int CAUSATIVE = 16;
+  public static int CONTRAADVERSATIVE = 17;
+  public static int PURPOSIVE = 18;
+  public static int DISCONZESSIVE = 19;
+  public static int CONSECUTIVE = 20;
+  public static int RESTRICTIVE = 21;
+  public static int ALTERATIVE = 22;
+  public static int EXPLANATIVE = 23;
+  public static int SIMULTIVE = 24;
+  public static int PRETEMPORATIVE = 25;
+  public static int POSTTEMPORATIVE = 26;
+  public static int DISCOMPERATIVE = 27;
+  
+  public static int OTHER = -1;
+  
+  public static String toString(int i){
+    switch(i){
+      default:return "Other";
+      case( 0):return "Additive";
+      case( 1):return "Disjunctive";
+      case( 2):return "Negative";
+      case( 3):return "Contrajunctive";
+      case( 4):return "Nonjunctive";
+      case( 5):return "Continuitive";
+      case( 6):return "Nonadditive";
+      case( 7):return "Adversative";
+      case( 8):return "Oppositive";
+      case( 9):return "Implicative";
+      case(10):return "Conditive";
+      case(11):return "Biconditive";
+      case(12):return "Extensive";
+      case(13):return "Subtractive";
+      case(14):return "Comperative";
+      case(15):return "Conzessive";
+      case(16):return "Causative";
+      case(17):return "Contraadversative";
+      case(18):return "Purposive";
+      case(19):return "Disconzessive";
+      case(20):return "Consecutive";
+      case(21):return "Restrictive";
+      case(22):return "Alterantive";
+      case(23):return "Explanative";
+      case(24):return "Simultive";
+      case(25):return "Pretemporative";
+      case(26):return "Posttemporative";
+      case(27):return "Discomperative";
+    }
+  }
+  
+  public static String description(int i){
+    switch(i){
+      default:return "-";
+      case( 0):return "Adding two objects/sentences";
+      case( 1):return "Choosing between two options or both";
+      case( 2):return "Negating an object/sentence";
+      case( 3):return "Choosing only one out of multiple options";
+      case( 4):return "Choosing none of muliple options";
+      case( 5):return "Making a sequence of options/objects/sentences";
+      case( 6):return "Negating a certain combination of options";
+      case( 7):return "EXPLANATION MISSING (but)";
+      case( 8):return "The secondary option contradicts the primary option";
+      case( 9):return "The first option implies the second";
+      case(10):return "The first option influences the second";
+      case(11):return "Both options are the same (or extremely similar)";
+      case(12):return "extends the first object with information";
+      case(13):return "extracts information from the first object";
+      case(14):return "compares two options as similar";
+      case(15):return "EXPLANATION MISSING (obwohl)";
+      case(16):return "option 2 is the reason for option 1";
+      case(17):return "preferable to option 2";
+      case(18):return "option 1 is neccessary for option 2";
+      case(19):return "taking option 1 while ignoring option 2's effects";
+      case(20):return "option 1 is the precondition for option 2";
+      case(21):return "EXPLANATION MISSING (wohingegen)";
+      case(22):return "option 2 is an alternative to option 1";
+      case(23):return "option 1 is explained by option 2";
+      case(24):return "both options happen at the same time";
+      case(25):return "option 1 happened after option 2";
+      case(26):return "option 1 happened before option 2";
+      case(27):return "compares two options as not similar";
+    }
+  }
+  
+  public static String exampleEng(int i){
+    switch(i){
+      default:return "-";
+      case( 0):return "and, aswell";
+      case( 1):return "or";
+      case( 2):return "not";
+      case( 3):return "either or";
+      case( 4):return "neither";
+      case( 5):return "(comma), and";
+      case( 6):return "(none of the options)";
+      case( 7):return "but";
+      case( 8):return "yet, contrasting";
+      case( 9):return "causing, implying";
+      case(10):return "if, when";
+      case(11):return "euqals";
+      case(12):return "with";
+      case(13):return "without";
+      case(14):return "like, similar to";
+      case(15):return "although, though";
+      case(16):return "because, cause";
+      case(17):return "rather";
+      case(18):return "for (doing so, the purpose of)";
+      case(19):return "regardless";
+      case(20):return "so that";
+      case(21):return "while";
+      case(22):return "instead";
+      case(23):return "by (doing)";
+      case(24):return "while also";
+      case(25):return "after";
+      case(26):return "before";
+      case(27):return "unlike";
+    }
+  }
+  
+  public static String exampleGer(int i){
+    switch(i){
+      default:return "-";
+      case( 0):return "und";
+      case( 1):return "oder";
+      case( 2):return "nicht, kein";
+      case( 3):return "entweder oder";
+      case( 4):return "weder noch";
+      case( 5):return "(Komma einer Aufzählung), und";
+      case( 6):return "(keines davon)";
+      case( 7):return "aber";
+      case( 8):return "trotzdem";
+      case( 9):return "impliziert, dadurch, folglich";
+      case(10):return "wodurch, weshalb";
+      case(11):return "entspricht, gleicht";
+      case(12):return "mit";
+      case(13):return "ohne";
+      case(14):return "wie, ähnlich";
+      case(15):return "obwohl";
+      case(16):return "weil";
+      case(17):return "anstatt";
+      case(18):return "um (zu erreichen), für";
+      case(19):return "trotz, obwohl";
+      case(20):return "damit, für";
+      case(21):return "wohingegen, während";
+      case(22):return "alternativ, anstatt";
+      case(23):return "um (zu schaffen), für";
+      case(24):return "während, zuweilen";
+      case(25):return "nachdem";
+      case(26):return "bevor";
+      case(27):return "anders als";
+    }
+  }
+  
+  public static int getAmount(){
+    return 22; //NEEDS TO BE UPDATED WHEN ADDING NEW QUANTIFIERS
   }
 }
 
@@ -582,10 +899,31 @@ public class WordModifier{ //Used for adding Pre/Post-Syllables or modifications
     //sort();
   }
   
+  public WordModifier(String s){ //Used for loading from a file
+    String[] tmp = split(s,':');
+    nameId = int( split(tmp[0], ',')[0] );
+    name = split(tmp[0], ',')[2];
+    
+    modifiers = new SyllableModifier[int( split(tmp[0], ',')[1] )];
+    for(int i = 0; i<modifiers.length;i++){
+      modifiers[i] = new SyllableModifier( tmp[i+1] );
+    }
+    
+    println("Quantifier: "+nameId+", "+name+" : "+toString());
+  }
+  
   public String toString(){
     String tmp = "";
     for(int i = 0; i<modifiers.length ; i++){ 
       tmp += modifiers[i].toString();
+    }
+    return tmp;
+  }
+  
+  public String saveModifier(){
+    String tmp = ""+nameId +","+ modifiers.length +","+name;
+    for(int i = 0; i<modifiers.length;i++){
+      tmp += ":"+modifiers[i].saveModifier();
     }
     return tmp;
   }
@@ -623,7 +961,6 @@ public class SyllableModifier{
   public boolean onsetFixed = false;
   public String onsetSound = ""; //if fixed
   public int onsetReferencePosition = -1;     //if not fixed
-  //public boolean onsetKeepCoda = true;       //if not fixed (if the coda of the previous syllable should be dropped
   public boolean onsetCopyOnset = true;       //if not fixed (if the onset or the coda of the selected syllable should be copied)
   
   public boolean nucleusFixed = false;
@@ -633,7 +970,6 @@ public class SyllableModifier{
   public boolean codaFixed = false;
   public String codaSound = ""; //if fixed
   public int codaReferencePosition = -1;      //if not fixed
-  //public boolean onsetKeepCoda = true;       //if not fixed (if the coda of the previous syllable should be dropped
   public boolean codaCopyCoda = true;       //if not fixed (if the onset or the coda of the selected syllable should be copied)
   
   public SyllableModifier(int type, int pos, String on, String nu, String co){ //cvc
@@ -701,6 +1037,25 @@ public class SyllableModifier{
     codaFixed = false;    codaReferencePosition = coP; codaCopyCoda = coR;
   }
   
+  public SyllableModifier(String s){ //For the save/load system
+    String[] tmp = split(s,',');
+    syllablePosition = int(tmp[0]);
+    preSyllable = int(tmp[1]) == 1;
+    postSyllable = int(tmp[1]) == 2;
+    inSyllable = int(tmp[1]) == 3;
+    onsetFixed = int(tmp[2]) == 1;
+    onsetSound = tmp[3];
+    onsetReferencePosition = int(tmp[4]);
+    onsetCopyOnset = int(tmp[5]) == 1;
+    nucleusFixed = int(tmp[6]) == 1;
+    nucleusSound = tmp[7];
+    nucleusReferencePosition = int(tmp[8]);
+    codaFixed = int(tmp[9]) == 1;
+    codaSound = tmp[10];
+    codaReferencePosition = int(tmp[11]);
+    codaCopyCoda = int(tmp[12]) == 1;
+  }
+  
   public String toString(){
     String tmp = "";
     tmp += (postSyllable || inSyllable)?"-[":"[";
@@ -712,6 +1067,14 @@ public class SyllableModifier{
     tmp += codaFixed? codaSound : codaCopyCoda? "Cc"+codaReferencePosition:"Co";
     
     tmp += (preSyllable || inSyllable)?"]-":"]";
+    return tmp;
+  }
+  
+  public String saveModifier(){
+    String tmp = syllablePosition +","+ (preSyllable?"1":postSyllable?"2":inSyllable?"3":"0");
+    tmp += ","+ (onsetFixed?"1":"0") +","+ onsetSound +","+ onsetReferencePosition +","+ (onsetCopyOnset?"1":"0");
+    tmp += ","+ (nucleusFixed?"1":"0") +","+ nucleusSound +","+ nucleusReferencePosition;
+    tmp += ","+ (codaFixed?"1":"0") +","+ codaSound +","+ codaReferencePosition +","+ (codaCopyCoda?"1":"0");
     return tmp;
   }
 }

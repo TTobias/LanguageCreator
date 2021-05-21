@@ -853,14 +853,15 @@ public class UI_WordEditor extends UIObject{
     wordTypeSelection.addButton( new UI_Button(new Vector2(pos.x+expanse.x*0.04,position.y+expanse.y*0.3), new Vector2(expanse.x*0.31,expanse.y*0.08),"Verb",true) );
     wordTypeSelection.addButton( new UI_Button(new Vector2(pos.x+expanse.x*0.04,position.y+expanse.y*0.4), new Vector2(expanse.x*0.31,expanse.y*0.08),"Adjective",true) );
     wordTypeSelection.addButton( new UI_Button(new Vector2(pos.x+expanse.x*0.04,position.y+expanse.y*0.5), new Vector2(expanse.x*0.31,expanse.y*0.08),"Personal Pronoun",true) );
-    wordTypeSelection.addButton( new UI_Button(new Vector2(pos.x+expanse.x*0.04,position.y+expanse.y*0.6), new Vector2(expanse.x*0.31,expanse.y*0.08),"Other",true) );
+    wordTypeSelection.addButton( new UI_Button(new Vector2(pos.x+expanse.x*0.04,position.y+expanse.y*0.6), new Vector2(expanse.x*0.31,expanse.y*0.08),"Conjunction",true) );
+    wordTypeSelection.addButton( new UI_Button(new Vector2(pos.x+expanse.x*0.04,position.y+expanse.y*0.7), new Vector2(expanse.x*0.31,expanse.y*0.08),"Other",true) );
   }
   
   public void setWord( WordTranslation wt){
     word = wt;
     
     wordInput.text = word.word;
-    wordTypeSelection.selected = word.wordtype == -1?5:word.wordtype;
+    wordTypeSelection.selected = word.wordtype == -1?6:word.wordtype;
     translationInput.text = word.translation;
     rootwordText.text = "Root: [None]";
     pronounciationText.text = " Pronounciation:\n  "+word.word+"\n  "+languageData.convertToSimplifiedPronounciation(word.word);
